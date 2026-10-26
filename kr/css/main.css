@@ -1,0 +1,2416 @@
+@charset "UTF-8";
+/* ==========================================================================
+   메인 화면 전용 스타일 (kr/html/main.html, Figma: 컨텐츠 > main-확정 node 11510:62328)
+   - 메인에서만 불러옵니다. 서브와 같이 쓰는 것(통합검색 추천 검색어 등)은 krds-custom.css 그대로 씁니다.
+   - KRDS 에 없는 모양은 Figma 값 그대로 넣고 [Figma 고정값] 으로 표시했습니다.
+   - 컴포넌트 문서 : kr/html/code/ext_main_*.html , _common/html/code/tab--text.html
+   차례
+     0. 글꼴 · 색 변수 · 본문 폭(1520px)
+     1. 공통 (영역 제목 · 둥근 버튼 · 아이콘)
+     2. 히어로
+     3. 숫자로 보는 특수교육 · 실태조사변천사 (글자형 탭 · 숫자 카드 · 변천사)
+     4. 그래프로 보는 특수교육 실태조사 (링크 카드)
+     5. 공지사항 · 연구 보고서 · 알림판
+     6. 원본 데이터 보기 · 유관 사이트 (아이콘 타일)
+     7. 바로가기 (떠 있는 메뉴)
+     8. 반응형
+     9. 선명하게(고대비) 모드
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   0. 글꼴 · 색 변수 · 본문 폭
+   -------------------------------------------------------------------------- */
+/* [Figma 고정값] 히어로 제목 · 알림판 배너 제목 : Gmarket Sans Bold (KRDS 글꼴 아님, 무료 배포 글꼴) */
+@font-face {
+  font-family: "Gmarket Sans";
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("../../_common/resources/font/GmarketSansBold.woff") format("woff");
+}
+/* [Figma 고정값] 변천사 연도 숫자 : Bebas Neue (KRDS 글꼴 아님, OFL 글꼴, 숫자 · 영문만) */
+@font-face {
+  font-family: "Bebas Neue";
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("../../_common/resources/font/BebasNeue-Regular.woff2") format("woff2");
+}
+
+body.cm-main {
+  /* 메인만 본문 폭 1520px (서브는 KRDS 기본 1200px). 헤더 · 푸터의 .inner 도 함께 넓어짐 */
+  --krds-contents-size: 152rem;
+  --krds-contents-wrap-size: calc(152rem + var(--krds-contents-padding-x) * 2);
+
+  --cm-main-font-display: "Gmarket Sans", "Pretendard GOV", sans-serif;
+  --cm-main-font-number: "Bebas Neue", "Pretendard GOV", sans-serif;
+  --cm-main-data-bg: var(--krds-color-light-primary-70); /* #083891 */
+  --cm-main-tab-off: var(--krds-color-light-primary-20); /* #b1cefb */
+  --cm-main-line: var(--krds-light-color-border-secondary-light); /* #d6e0eb */
+  --cm-main-notice-bg: #f7f9fb; /* [Figma 고정값] surface-secondary-subtler 위에 흰색 50% */
+  --cm-main-card-bg: #edf7fe; /* [Figma 고정값] 링크 카드 1(시계열) : information-5 위에 흰색 25% */
+  --cm-main-card-border: var(--krds-light-color-border-information-light, #d3ebfd);
+  --cm-main-card-hover-bg: #eef3fe; /* [Figma 고정값] 링크 카드 2(핵심데이터) : primary-5 위에 흰색 10% */
+  --cm-main-card-hover-border: var(--krds-color-light-primary-10); /* #d8e5fd */
+  --cm-main-go-bg: #123e7b; /* [Figma 고정값] 링크 카드 화살표 버튼 */
+  --cm-main-tile-bg: #f0f5fc; /* [Figma 고정값] */
+  --cm-main-tile-divider: #dce5f1; /* [Figma 고정값] */
+  --cm-main-round-border: #d6e0ed; /* [Figma 고정값] */
+  --cm-main-round-hover: var(--krds-light-color-action-secondary-hover); /* #eef2f7 */
+  --cm-main-band-bg: #052b57; /* Figma icon/secondary-static */
+  --cm-main-count-bg: var(--krds-light-color-surface-gray-subtler);
+  --cm-main-page-bg: var(--krds-light-color-background-white);
+}
+
+/* 헤더 : Figma 메인 헤더는 메인메뉴 없이 160px(공식 누리집 배너 32 + 헤더 128)이고 아래에 선이 있음.
+   공통 헤더(메인메뉴 없음)는 146px 이라 메인에서만 위 · 아래 여백과 선을 더함 */
+@media (min-width: 1024px) {
+  body.cm-main #krds-header .header-in {
+    border-bottom: 0.1rem solid var(--cm-color-divider-light);
+  }
+  body.cm-main #krds-header .header-container > .inner {
+    padding-top: calc(var(--krds-header--container-padding-top) + 0.6rem);
+    padding-bottom: calc(var(--krds-header--container-padding-bottom) + 0.7rem);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   1. 공통
+   -------------------------------------------------------------------------- */
+.cm-main-container {
+  overflow-x: clip;
+}
+.cm-main-sec {
+  padding-top: 8rem;
+}
+.cm-main-tit {
+  font-size: var(--krds-pc-font-size-heading-medium); /* 24px */
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+  color: var(--cm-color-text-basic);
+}
+
+/* 둥근 버튼 40px : 이전 · 다음 · 정지 (KRDS carousel__atomic 모양, Figma 값) */
+.cm-round-btn {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: var(--krds-size-height-6);
+  height: var(--krds-size-height-6);
+  border: 0.1rem solid var(--cm-main-round-border);
+  border-radius: var(--krds-radius-max);
+  background-color: var(--cm-color-surface-white);
+  transition: var(--krds-transition-base);
+}
+.cm-round-btn .svg-icon {
+  width: var(--krds-icon--size-large);
+  height: var(--krds-icon--size-large);
+  background-color: var(--cm-color-icon);
+}
+.cm-round-btn:hover {
+  background-color: var(--cm-main-round-hover);
+}
+.cm-round-btn:focus-visible {
+  outline: 0.2rem solid var(--cm-color-border-primary);
+  outline-offset: 0.2rem;
+}
+.cm-round-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+/* 아이콘 (KRDS 기본 아이콘에 없는 것, Figma 아이콘을 마스크로) */
+.cm-ico-arrow,
+.cm-ico-top,
+.cm-ico-view-all {
+  display: inline-block;
+  flex: none;
+  width: 1.6rem;
+  height: 1.6rem;
+  background-color: currentColor;
+  -webkit-mask: center / contain no-repeat;
+  mask: center / contain no-repeat;
+}
+.cm-ico-arrow {
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M9.2 3.3a.6.6 0 0 0-.85.85L11.6 7.4H2.6a.6.6 0 0 0 0 1.2h9l-3.25 3.25a.6.6 0 1 0 .85.85l4.27-4.28a.6.6 0 0 0 0-.84L9.2 3.3Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M9.2 3.3a.6.6 0 0 0-.85.85L11.6 7.4H2.6a.6.6 0 0 0 0 1.2h9l-3.25 3.25a.6.6 0 1 0 .85.85l4.27-4.28a.6.6 0 0 0 0-.84L9.2 3.3Z'/%3E%3C/svg%3E");
+}
+.cm-ico-top {
+  transform: rotate(-90deg);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M9.2 3.3a.6.6 0 0 0-.85.85L11.6 7.4H2.6a.6.6 0 0 0 0 1.2h9l-3.25 3.25a.6.6 0 1 0 .85.85l4.27-4.28a.6.6 0 0 0 0-.84L9.2 3.3Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M9.2 3.3a.6.6 0 0 0-.85.85L11.6 7.4H2.6a.6.6 0 0 0 0 1.2h9l-3.25 3.25a.6.6 0 1 0 .85.85l4.27-4.28a.6.6 0 0 0 0-.84L9.2 3.3Z'/%3E%3C/svg%3E");
+}
+.cm-ico-view-all {
+  width: 2.4rem;
+  height: 2.4rem;
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M3.8 3h6.4c.44 0 .8.36.8.8v6.4a.8.8 0 0 1-.8.8H3.8a.8.8 0 0 1-.8-.8V3.8c0-.44.36-.8.8-.8Zm.8 1.6v4.8h4.8V4.6H4.6ZM13.8 3h6.4c.44 0 .8.36.8.8v6.4a.8.8 0 0 1-.8.8h-6.4a.8.8 0 0 1-.8-.8V3.8c0-.44.36-.8.8-.8Zm.8 1.6v4.8h4.8V4.6h-4.8ZM3.8 13h6.4c.44 0 .8.36.8.8v6.4a.8.8 0 0 1-.8.8H3.8a.8.8 0 0 1-.8-.8v-6.4c0-.44.36-.8.8-.8Zm.8 1.6v4.8h4.8v-4.8H4.6Zm9.2-1.6h6.4c.44 0 .8.36.8.8v6.4a.8.8 0 0 1-.8.8h-6.4a.8.8 0 0 1-.8-.8v-6.4c0-.44.36-.8.8-.8Zm.8 1.6v4.8h4.8v-4.8h-4.8Z'/%3E%3C/svg%3E");
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill-rule='evenodd' d='M3.8 3h6.4c.44 0 .8.36.8.8v6.4a.8.8 0 0 1-.8.8H3.8a.8.8 0 0 1-.8-.8V3.8c0-.44.36-.8.8-.8Zm.8 1.6v4.8h4.8V4.6H4.6ZM13.8 3h6.4c.44 0 .8.36.8.8v6.4a.8.8 0 0 1-.8.8h-6.4a.8.8 0 0 1-.8-.8V3.8c0-.44.36-.8.8-.8Zm.8 1.6v4.8h4.8V4.6h-4.8ZM3.8 13h6.4c.44 0 .8.36.8.8v6.4a.8.8 0 0 1-.8.8H3.8a.8.8 0 0 1-.8-.8v-6.4c0-.44.36-.8.8-.8Zm.8 1.6v4.8h4.8v-4.8H4.6Zm9.2-1.6h6.4c.44 0 .8.36.8.8v6.4a.8.8 0 0 1-.8.8h-6.4a.8.8 0 0 1-.8-.8v-6.4c0-.44.36-.8.8-.8Zm.8 1.6v4.8h4.8v-4.8h-4.8Z'/%3E%3C/svg%3E");
+}
+/* 새 글 표시 N (Figma icon/new, 빨강 사각 + 흰 N) */
+.cm-ico-new {
+  display: inline-block;
+  flex: none;
+  width: 2rem;
+  height: 2rem;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='4' fill='%23D63D4A'/%3E%3Cpath d='M10.92 11.39h-1.5L6.91 7.73h-.04v3.67H5.08V4.6H6.6l2.48 3.65h.06V4.6h1.78v6.79Z' fill='%23fff'/%3E%3C/svg%3E") center / 1.6rem no-repeat;
+}
+
+/* --------------------------------------------------------------------------
+   2. 히어로 (신규 컴포넌트 ext_main_hero, Figma node 11510:62329)
+   -------------------------------------------------------------------------- */
+.cm-hero {
+  position: relative;
+  /* 정지 이미지 : 영상을 재생하지 않을 때(동작 줄이기 · 데이터 절약 · 모바일 · 불러오기 전) 보이는 배경.
+     Figma 배경 프레임(1920×435, 불투명도 20%)을 그대로 내려받은 이미지 */
+  background: url("../img/main/hero_bg.png") center top / max(100%, 192rem) auto no-repeat;
+}
+/* 배경 영상 : Figma 는 영상(1920×574)을 불투명도 20%로 깔아 둠. 재생이 시작되면 정지 이미지를 빼고 영상을 보임 */
+.cm-hero.is-video {
+  background-image: none;
+}
+.cm-hero-bg {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.cm-hero-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.6s;
+}
+.cm-hero.is-video .cm-hero-video {
+  opacity: 0.2;
+}
+/* 배경 영상 정지 · 재생 버튼 : 평소에는 작은 회색 글자 + 아이콘만 보이는 조용한 모양 (Figma 에 없는 추가 요소)
+   - 히어로 디자인을 해치지 않게 테두리 · 바탕 없이 두고, 올리거나 초점이 가면 알약 모양 바탕이 나타남
+   - 접근성 : 글자를 항상 보여 줌(아이콘만으로 뜻을 전하지 않음), 글자 · 아이콘 색은 흰 바탕 대비 4.5:1 이상인 text-subtle,
+     누르는 영역 높이 32px(기준 24px 이상), 초점 테두리는 그대로 */
+.cm-hero-toggle {
+  position: absolute;
+  right: var(--krds-contents-padding-x);
+  bottom: var(--krds-padding-5);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--krds-gap-1);
+  height: var(--krds-size-height-5); /* 32px */
+  padding: 0 var(--krds-padding-4) 0 var(--krds-padding-3);
+  border: 0.1rem solid transparent;
+  border-radius: var(--krds-radius-max);
+  background-color: transparent;
+  font-size: var(--krds-pc-font-size-body-xsmall);
+  font-weight: var(--krds-font-weight-regular);
+  line-height: 1.5;
+  color: var(--cm-color-text-subtle);
+  transition: var(--krds-transition-base);
+}
+.cm-hero-toggle .svg-icon {
+  width: var(--krds-icon--size-small, 1.6rem);
+  height: var(--krds-icon--size-small, 1.6rem);
+  background-color: currentColor;
+}
+.cm-hero-toggle:hover,
+.cm-hero-toggle:focus {
+  border-color: var(--cm-color-border-gray);
+  background-color: var(--cm-color-surface-white);
+  color: var(--cm-color-text-basic);
+}
+.cm-hero-toggle:focus {
+  box-shadow: none;
+  outline: 0.2rem solid var(--cm-color-border-primary);
+  outline-offset: 0.2rem;
+}
+.cm-hero-toggle[hidden] {
+  display: none;
+}
+.cm-hero > .inner {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9.2rem;
+  min-height: 44rem;
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+.cm-hero-txt {
+  flex: none;
+  text-align: center;
+}
+/* [Figma 고정값] 제목 : Gmarket Sans Bold 54 / 52px, 자간 1px, 흰 번짐 그림자 */
+.cm-hero-txt .tit {
+  font-family: var(--cm-main-font-display);
+  font-weight: 700;
+  line-height: 1.5;
+  letter-spacing: 0.1rem;
+  text-shadow: 0 0 1rem var(--cm-main-page-bg);
+}
+.cm-hero-txt .tit span {
+  display: block;
+}
+.cm-hero-txt .tit .line1 {
+  font-size: 5.4rem;
+  color: var(--cm-color-text-primary);
+}
+.cm-hero-txt .tit .line1 em {
+  font-style: normal;
+  color: #1a7fd6; /* Figma #2098f3 은 배경 영상의 진한 점과 겹칠 때 대비가 2.3:1 까지 떨어져, 같은 하늘색 계열에서 조금 진하게 보정.
+                     큰 글자 기준 3:1 : 흰 배경 4.2:1, 영상과 겹치는 가장 불리한 장면에서도 3:1 이상 */
+}
+.cm-hero-txt .tit .line2 {
+  margin-top: -1.2rem;
+  font-size: 5.2rem;
+  color: var(--cm-color-text-secondary);
+}
+.cm-hero-txt .desc {
+  margin-top: 1.7rem;
+  font-size: var(--krds-pc-font-size-body-medium);
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+  color: var(--cm-color-text-basic);
+}
+.cm-hero-search {
+  flex: 0 1 60rem;
+  min-width: 0;
+}
+/* [Figma 고정값] 알약 모양 검색 칸 + 그라데이션 둥근 버튼 (KRDS 입력 · 버튼 구조는 유지) */
+.cm-hero-form {
+  position: relative;
+}
+.cm-hero-form .krds-input {
+  width: 100%;
+  height: 7.2rem;
+  padding: 0 9.2rem 0 3.8rem;
+  border: 0.3rem solid var(--cm-color-border-primary);
+  border-radius: 10rem;
+  background-color: var(--cm-color-surface-white);
+  font-size: var(--krds-pc-font-size-body-large); /* 19px */
+  font-weight: var(--krds-font-weight-regular);
+  color: var(--cm-color-text-basic);
+}
+.cm-hero-form .krds-input::placeholder {
+  color: var(--cm-color-text-disabled-on); /* Figma text-disabled(#8a949e)는 대비 3:1 → 4.5:1 되는 색으로 보정 */
+}
+.cm-hero-form .krds-input:focus {
+  border-color: var(--cm-color-border-primary);
+  outline: 0.2rem solid var(--cm-color-border-primary);
+  outline-offset: 0.2rem;
+}
+.cm-hero-form .btn-submit {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 7.2rem;
+  height: 7.2rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #256ef4 15%, #5917b8 85%); /* [Figma 고정값] */
+  box-shadow: 0 1rem 2rem rgba(96, 96, 194, 0.3);
+}
+.cm-hero-form .btn-submit .svg-icon {
+  width: 2.8rem;
+  height: 2.8rem;
+  background-color: #fff;
+}
+.cm-hero-form .btn-submit:hover {
+  filter: brightness(0.92);
+}
+.cm-hero-form .btn-submit:focus-visible {
+  outline: 0.2rem solid var(--cm-color-border-primary);
+  outline-offset: 0.3rem;
+}
+.cm-hero-search .cm-search-recommend {
+  margin-top: 2.3rem;
+  padding-left: 2.8rem;
+}
+/* 추천 검색어 제목 : 배경 영상 위에 바로 놓여 영상의 진한 점과 겹칠 때 대비가 3.8:1 까지 떨어짐
+   → 한 단계 진한 회색(text-subtle)으로 바꿔 가장 불리한 장면에서도 4.5:1 이상 유지 */
+.cm-hero-search .cm-search-recommend .tit {
+  color: var(--cm-color-text-subtle);
+}
+
+/* --------------------------------------------------------------------------
+   3. 숫자로 보는 특수교육 · 실태조사변천사 (Figma: section2-1)
+   -------------------------------------------------------------------------- */
+.cm-main-data {
+  padding: 7rem 0;
+  background-color: var(--cm-main-data-bg);
+}
+
+/* 3-1. 글자형 탭 : KRDS 탭 변형 (_common/html/code/tab--text.html)
+        KRDS 탭 구조 · 스크립트는 그대로, 버튼 모양만 글자 + 선택 화살표로 바꿈 [Figma 고정값] */
+.cm-main-data .krds-tab-area {
+  gap: 4rem;
+}
+.tab.cm-tab-text {
+  --cm-tab-text-padding-x: var(--krds-padding-4); /* 1rem : 초점 테두리가 글자에 붙지 않게 하는 좌우 여백 */
+}
+.tab.cm-tab-text > ul {
+  flex-wrap: wrap;
+  gap: 0.8rem calc(3rem - var(--cm-tab-text-padding-x) * 2); /* 글자 사이 30px(Figma) = 간격 + 양쪽 버튼 여백 */
+  overflow: visible;
+  width: auto;
+  margin: 0 calc(var(--cm-tab-text-padding-x) * -1); /* 버튼 여백만큼 바깥으로 빼 첫 글자를 본문 왼쪽 선에 맞춤 */
+}
+.tab.cm-tab-text .btn-tab {
+  gap: 0.4rem;
+  width: auto;
+  height: auto;
+  padding: 0 var(--cm-tab-text-padding-x);
+  border: 0;
+  background-color: transparent;
+  font-size: var(--krds-pc-font-size-heading-medium); /* 24px */
+  line-height: 1.5;
+  color: var(--cm-main-tab-off);
+}
+.tab.cm-tab-text .btn-tab:not(:disabled):hover,
+.tab.cm-tab-text .btn-tab:not(:disabled):active {
+  background-color: transparent;
+  color: #fff;
+}
+/* 초점 : KRDS 는 눌렀을 때도 초점 테두리를 보이고(*:focus), 탭 버튼은 테두리를 안쪽(-0.4rem)으로 그림.
+   글자형 탭은 상자가 없어 안쪽 테두리가 글자와 겹치므로 버튼 바깥쪽에 그리도록 바꿈 */
+.tab.cm-tab-text .btn-tab:focus {
+  border-radius: var(--krds-radius-small2);
+  box-shadow: none;
+  outline: 0.2rem solid #fff;
+  outline-offset: 0.2rem;
+}
+.tab.cm-tab-text .active .btn-tab {
+  color: #fff;
+}
+/* 선택한 탭 : 아래 화살표 24px */
+.tab.cm-tab-text .active .btn-tab::after {
+  content: "";
+  order: 1;
+  width: 2.4rem;
+  height: 2.4rem;
+  background-color: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4.27 8.4a.8.8 0 0 1 1.13-.06L12 14.27l6.6-5.93a.8.8 0 1 1 1.07 1.19l-7.14 6.4a.8.8 0 0 1-1.06 0l-7.14-6.4a.8.8 0 0 1-.06-1.13Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M4.27 8.4a.8.8 0 0 1 1.13-.06L12 14.27l6.6-5.93a.8.8 0 1 1 1.07 1.19l-7.14 6.4a.8.8 0 0 1-1.06 0l-7.14-6.4a.8.8 0 0 1-.06-1.13Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.cm-main-data .tab-conts {
+  margin-top: 0;
+}
+.cm-main-data .tab-conts.active {
+  gap: 0;
+}
+
+/* 3-2. 숫자 카드 (신규 컴포넌트 ext_main_stat_card)
+        선명하게(어두운 배경) 모드의 색은 맨 아래 9번에서 바꿈 */
+.cm-stat-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.4rem;
+}
+.cm-stat-card {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2.4rem;
+  padding: 5rem 6rem;
+  border-radius: 1.6rem;
+  background-color: #fff;
+  color: #1e2124;
+}
+.cm-stat-card .info {
+  min-width: 0;
+}
+.cm-stat-card .tit {
+  font-size: var(--krds-pc-font-size-heading-small); /* 19px */
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+  word-break: keep-all;
+}
+.cm-stat-card .num {
+  margin-top: 3rem;
+  font-size: var(--krds-pc-font-size-heading-large); /* 32px */
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+}
+.cm-stat-card .tag {
+  display: inline-block;
+  margin-top: 0.2rem;
+  padding: 0.4rem 1rem;
+  border: 0.1rem solid #b1b8be;
+  border-radius: 0.4rem;
+  font-size: var(--krds-pc-font-size-body-medium);
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+  color: #464c53;
+}
+.cm-stat-card .graph {
+  flex: none;
+  width: 29rem;
+}
+.cm-stat-card .graph img,
+.cm-stat-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+/* 인포그래픽 SVG : 글자는 사이트 글꼴, 숫자는 올라가는 동안 흔들리지 않게 같은 폭 숫자 */
+.cm-stat-svg {
+  overflow: visible;
+  font-family: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.cm-stat-card .num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* 인포그래픽 움직임 (Figma 에 없는 추가 효과) : 2008 값에서 2026 값으로 자라남 → 수치가 올라감 → 말풍선으로 마무리
+   - 스크립트가 준비되면 목록에 .is-ready, 카드가 화면에 들어오면 카드에 .is-play 를 붙임 (kr/js/main.js cmMainStat)
+   - 부품마다 class="m m-종류" 와 시작 시각(--d) · 길이(--t)를 SVG 에 적어 둠 (_tools/build_main_stat_svg.py)
+   - 스크립트가 꺼져 있거나 동작 줄이기 설정이면 .is-ready 가 붙지 않아 완성된 그림이 그대로 보임 */
+.cm-stat-svg .m {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+}
+.cm-stat-svg .m-growy {
+  --cm-stat-name: cm-stat-growy;
+  transform-origin: 50% 100%;
+}
+.cm-stat-svg .m-growx {
+  --cm-stat-name: cm-stat-growx;
+  transform-origin: 0 50%;
+}
+.cm-stat-svg .m-pop {
+  --cm-stat-name: cm-stat-pop;
+}
+.cm-stat-svg .m-pop-b {
+  --cm-stat-name: cm-stat-pop;
+  transform-origin: 50% 100%;
+}
+.cm-stat-svg .m-fade {
+  --cm-stat-name: cm-stat-fade;
+}
+.cm-stat-svg .m-fadeup {
+  --cm-stat-name: cm-stat-fadeup;
+}
+.cm-stat-svg .m-wipe-up {
+  --cm-stat-name: cm-stat-wipe-up;
+}
+.cm-stat-svg .m-wipe-right {
+  --cm-stat-name: cm-stat-wipe-right;
+}
+/* 고리 가림막 : 12시에서 시작하도록 SVG 에서 돌려 둔(rotate) 원이라 기준 상자를 바꾸지 않음 */
+.cm-stat-svg .m-sweep {
+  --cm-stat-name: cm-stat-sweep;
+  transform-box: view-box;
+  transform-origin: 0 0;
+}
+/* 재생 전 : 움직이는 부품을 숨김 */
+.cm-stat-cards.is-ready .cm-stat-card:not(.is-play) .cm-stat-svg .m {
+  opacity: 0;
+}
+/* 재생 : 카드 순서만큼(--cm-stat-delay) 늦게 시작. 전체 빠르기는 --cm-stat-speed 배율로 조절 (스크립트 cmMainStat.SPEED 가 넣음, 클수록 느림) */
+.cm-stat-cards.is-ready .cm-stat-card.is-play .cm-stat-svg .m {
+  animation: var(--cm-stat-name) calc(var(--t, 0.6s) * var(--cm-stat-speed, 1)) cubic-bezier(0.22, 1, 0.36, 1) calc((var(--d, 0s) + var(--cm-stat-delay, 0s)) * var(--cm-stat-speed, 1)) both;
+}
+@keyframes cm-stat-growy {
+  from {
+    transform: scaleY(0);
+  }
+}
+@keyframes cm-stat-growx {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes cm-stat-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes cm-stat-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes cm-stat-fadeup {
+  from {
+    opacity: 0;
+    transform: translateY(0.8rem);
+  }
+}
+@keyframes cm-stat-wipe-up {
+  from {
+    clip-path: inset(100% 0 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes cm-stat-wipe-right {
+  from {
+    clip-path: inset(0 100% 0 0);
+  }
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+@keyframes cm-stat-sweep {
+  from {
+    stroke-dashoffset: 100;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+.cm-stat-source {
+  margin-top: 1.6rem;
+  font-size: var(--krds-pc-font-size-body-medium);
+  line-height: 1.5;
+  text-align: right;
+  color: #fff;
+}
+
+/* 3-3. 실태조사변천사 (신규 컴포넌트 ext_main_history, Figma: 변천사3) [Figma 고정값] */
+.cm-history {
+  display: flex;
+  flex-direction: column;
+  gap: 5rem;
+  width: 100%;
+  max-width: 132rem;
+  margin: 0 auto;
+}
+.cm-history-stage {
+  position: relative;
+  padding-top: 9.7rem;
+}
+/* 겹쳐 쌓인 카드 : 카드마다 앞 장에서 몇 번째인지(data-offset)에 따라 자리를 정하고, 자리가 바뀔 때 0.3초로 움직임
+   (Figma 프로토타입 스마트 애니메이트 0.3초 ease-out, kr/js/main.js cmMainHistory)
+   - 0 : 앞 장 / 1 · 2 · 3 : 뒤에 비치는 반투명 판 (Figma : 위로 36 · 69 · 97px, 폭 1244 · 1178 · 1100 / 1320)
+   - far : 맨 뒤 자리에서 기다리는 장(안 보임) → 차례가 오면 맨 뒤에 나타남
+   - past : 방금 지나간 장. 아래로 36px 내려가며 사라짐 */
+.cm-history-slides {
+  --cm-history-y1: -3.6rem;
+  --cm-history-y2: -6.9rem;
+  --cm-history-y3: -9.7rem;
+  --cm-history-s1: 0.942;
+  --cm-history-s2: 0.892;
+  --cm-history-s3: 0.833;
+  display: grid;
+  touch-action: pan-y;
+}
+.cm-history-item {
+  grid-area: 1 / 1;
+  min-width: 0;
+  transform-origin: center top;
+  transition: transform 0.3s ease-out;
+  pointer-events: none;
+}
+.cm-history-item[data-offset="0"] {
+  z-index: 5;
+  pointer-events: auto;
+}
+.cm-history-item[data-offset="1"] {
+  z-index: 4;
+  transform: translateY(var(--cm-history-y1)) scale(var(--cm-history-s1));
+}
+.cm-history-item[data-offset="2"] {
+  z-index: 3;
+  transform: translateY(var(--cm-history-y2)) scale(var(--cm-history-s2));
+}
+.cm-history-item[data-offset="3"] {
+  z-index: 2;
+  transform: translateY(var(--cm-history-y3)) scale(var(--cm-history-s3));
+}
+.cm-history-item[data-offset="far"] {
+  z-index: 1;
+  transform: translateY(var(--cm-history-y3)) scale(var(--cm-history-s3));
+}
+.cm-history-item[data-offset="past"] {
+  z-index: 6;
+  transform: translateY(3.6rem);
+}
+.cm-history-slide {
+  position: relative;
+  overflow: hidden;
+  height: 43.6rem;
+  padding: 7rem 8rem;
+  border: 0.1rem solid transparent;
+  border-radius: 3rem;
+  background-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 1.4rem 1.8rem 2.2rem rgba(0, 0, 0, 0.15);
+  color: var(--krds-light-color-text-basic);
+  opacity: 0;
+  transition: background-color 0.3s ease-out, border-color 0.3s ease-out, opacity 0.3s ease-out;
+}
+.cm-history-slide > * {
+  opacity: 0;
+  transition: opacity 0.3s ease-out;
+}
+/* 뒤 3장 : 반투명 판만 보임 */
+.cm-history-item[data-offset="1"] .cm-history-slide,
+.cm-history-item[data-offset="2"] .cm-history-slide,
+.cm-history-item[data-offset="3"] .cm-history-slide {
+  opacity: 1;
+}
+/* 앞 장 */
+.cm-history-item[data-offset="0"] .cm-history-slide {
+  border-color: var(--krds-color-light-secondary-30);
+  background-color: var(--krds-light-color-surface-white);
+  opacity: 1;
+}
+.cm-history-item[data-offset="0"] .cm-history-slide > * {
+  opacity: 1;
+}
+.cm-history-slide .top {
+  display: flex;
+  align-items: flex-start;
+  gap: 6rem;
+  padding-right: 34rem; /* 표지 자리 */
+}
+.cm-history-slide .head {
+  display: flex;
+  flex: none;
+  align-items: flex-end;
+  gap: 1rem;
+}
+/* Figma 글꼴 Ria Sans 는 넣지 않고 Pretendard GOV 로 대체 (노트 참고) */
+.cm-history-slide .eyebrow {
+  line-height: 1.5;
+  color: var(--krds-color-light-secondary-70);
+}
+.cm-history-slide .eyebrow span {
+  display: block;
+}
+.cm-history-slide .eyebrow .sub {
+  font-size: 1.4rem;
+  color: var(--krds-color-light-secondary-50); /* Figma : secondary-70 불투명도 40%(대비 2.7:1) → 4.5:1 넘는 같은 계열 토큰(5.2:1) */
+}
+.cm-history-slide .eyebrow .main {
+  font-size: var(--krds-pc-font-size-body-medium);
+  font-weight: var(--krds-font-weight-medium);
+}
+.cm-history-slide .idx {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: var(--krds-color-light-secondary-70);
+  font-size: var(--krds-pc-font-size-heading-small);
+  font-weight: var(--krds-font-weight-bold);
+  color: var(--krds-light-color-text-inverse-static);
+}
+.cm-history-slide .body {
+  min-width: 0;
+  padding-top: 9rem;
+}
+.cm-history-slide .body .tit {
+  font-size: var(--krds-pc-font-size-heading-large); /* 32px */
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+  color: var(--krds-light-color-text-secondary);
+  word-break: keep-all;
+}
+.cm-check-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-top: 1.4rem;
+}
+.cm-check-list li {
+  position: relative;
+  max-width: 42rem;
+  padding-left: 3.8rem;
+  font-size: var(--krds-pc-font-size-body-large); /* 19px */
+  line-height: 1.5;
+  word-break: keep-all;
+}
+.cm-check-list li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 2.8rem;
+  height: 2.8rem;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 28 28' fill='none'%3E%3Cpath d='M18.81 11.38 12.39 17.5l-3.2-3.06' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.cm-check-list em {
+  font-style: normal;
+  color: var(--krds-light-color-text-primary);
+}
+.cm-history-slide .side {
+  position: absolute;
+  top: 17.6rem;
+  left: 5.8rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5rem;
+}
+.cm-history-slide .year {
+  font-family: var(--cm-main-font-number);
+  font-size: 14.4rem;
+  line-height: 0.7;
+  color: rgba(130, 149, 171, 0.3);
+}
+/* 자세히보기 : KRDS 버튼(medium tertiary). 카드가 항상 흰 배경이라 색은 밝은 모드 값으로 고정 */
+.cm-history-slide .krds-btn.tertiary {
+  border-color: var(--krds-light-color-button-tertiary-border);
+  background-color: transparent;
+  color: var(--krds-light-color-text-basic);
+}
+.cm-history-slide .krds-btn.tertiary:hover {
+  background-color: var(--krds-light-color-surface-gray-subtler);
+}
+.cm-history-slide .krds-btn .svg-icon {
+  width: 2rem;
+  height: 2rem;
+  background-color: var(--krds-light-color-text-basic);
+}
+.cm-history-slide .cover {
+  position: absolute;
+  top: 13.1rem;
+  right: 5.9rem;
+  width: 31.5rem;
+  padding: 3rem;
+  background-color: var(--krds-light-color-surface-gray-subtler); /* Figma #f6f6f7 → 가장 가까운 토큰 gray-5 */
+}
+.cm-history-slide .cover img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* 연도 진행 막대 + 이전 · 다음 */
+.cm-history-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4rem;
+}
+.cm-history-timeline {
+  --cm-history-fill: 0px;
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  align-items: flex-start;
+  justify-content: space-between;
+  max-width: 118rem;
+}
+.cm-history-timeline::before,
+.cm-history-timeline::after {
+  content: "";
+  position: absolute;
+  top: 3.3rem;
+  left: 0;
+  height: 0.7rem;
+  pointer-events: none;
+}
+.cm-history-timeline::before {
+  width: 100%;
+  background-color: var(--krds-color-light-gray-10);
+}
+.cm-history-timeline::after {
+  width: var(--cm-history-fill);
+  background-color: var(--krds-light-color-border-primary);
+  transition: width 0.4s ease;
+}
+/* 현재 위치 표시 점 (Figma 에 없는 추가 효과) : 진행 막대 끝에 놓이는 밝은 하늘색 점 + 두근거림(하트비트)
+   - 색 : 막대의 파랑(primary-50)과 같은 계열에서 더 밝고 눈에 띄는 하늘색(KRDS information-20). 진한 파랑 띠 위 대비 약 6.5:1
+   - 막대가 움직이는 동안(.is-moving)은 숨었다가 멈추면 그 자리에 나타남 (kr/js/main.js cmMainHistory) */
+.cm-history-point {
+  --cm-history-point-color: var(--krds-color-light-information-20); /* #9ed2fa */
+  position: absolute;
+  top: calc(3.3rem + 0.35rem);
+  left: clamp(0.8rem, var(--cm-history-fill), calc(100% - 0.8rem));
+  z-index: 1;
+  width: 1.6rem;
+  height: 1.6rem;
+  margin: -0.8rem 0 0 -0.8rem;
+  border: 0.3rem solid var(--krds-light-color-surface-white);
+  border-radius: 50%;
+  background-color: var(--cm-history-point-color);
+  box-shadow: 0 0 0.8rem var(--cm-history-point-color);
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.25s;
+  animation: cm-history-beat 1.6s ease-in-out infinite;
+}
+/* 퍼져 나가는 고리 2겹 */
+.cm-history-point::before,
+.cm-history-point::after {
+  content: "";
+  position: absolute;
+  inset: -0.3rem;
+  border-radius: 50%;
+  background-color: var(--cm-history-point-color);
+  opacity: 0;
+  animation: cm-history-ring 1.6s ease-out infinite;
+}
+.cm-history-point::after {
+  animation-delay: 0.28s;
+}
+.cm-history-timeline.is-moving .cm-history-point {
+  opacity: 0;
+  transition: none;
+}
+/* 두근 · 두근 : 짧게 두 번 커졌다가 쉼 */
+@keyframes cm-history-beat {
+  0%,
+  40%,
+  100% {
+    transform: scale(1);
+  }
+  10% {
+    transform: scale(1.25);
+  }
+  20% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.18);
+  }
+}
+@keyframes cm-history-ring {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(2.8);
+  }
+}
+.cm-history-timeline button {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.5;
+  color: var(--krds-light-color-text-inverse-static);
+}
+.cm-history-timeline li:first-child button {
+  align-items: flex-start;
+}
+.cm-history-timeline li:last-child button {
+  align-items: flex-end;
+}
+.cm-history-timeline .year {
+  font-family: var(--cm-main-font-number);
+  font-size: var(--krds-pc-font-size-body-large);
+}
+.cm-history-timeline .label {
+  margin-top: 1.5rem; /* 막대(7px) 자리 */
+  font-size: var(--krds-pc-font-size-body-medium);
+  white-space: nowrap;
+}
+.cm-history-timeline .is-active .label {
+  font-weight: var(--krds-font-weight-bold);
+}
+.cm-history-timeline button:hover .label {
+  text-decoration: underline;
+}
+.cm-history-timeline button:focus-visible {
+  outline: 0.2rem solid var(--krds-light-color-text-inverse-static);
+  outline-offset: 0.4rem;
+}
+.cm-history-arrows {
+  display: flex;
+  flex: none;
+  gap: 0.8rem;
+}
+/* 파란 띠 위 둥근 버튼 : 항상 흰 버튼 */
+.cm-history-arrows .cm-round-btn {
+  border-color: var(--krds-light-color-border-gray-light);
+  background-color: var(--krds-light-color-surface-white);
+}
+.cm-history-arrows .cm-round-btn .svg-icon {
+  background-color: var(--krds-light-color-text-basic);
+}
+.cm-history-arrows .cm-round-btn:hover {
+  background-color: var(--krds-light-color-action-secondary-hover);
+}
+.cm-history-arrows .cm-round-btn:focus-visible {
+  outline-color: var(--krds-light-color-text-inverse-static);
+}
+
+/* --------------------------------------------------------------------------
+   4. 그래프로 보는 특수교육 실태조사 : 링크 카드 (신규 컴포넌트 ext_main_link_card) [Figma 고정값]
+   -------------------------------------------------------------------------- */
+.cm-link-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.4rem;
+  margin-top: 2.4rem;
+}
+.cm-link-card {
+  --cm-link-card-bg: var(--cm-main-card-bg);
+  --cm-link-card-line: var(--cm-main-card-border);
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4.8rem;
+  min-height: 23.8rem;
+  padding: 4.8rem 4rem;
+  border: 0.1rem solid var(--cm-link-card-line);
+  border-radius: 1.6rem;
+  background-color: var(--cm-link-card-bg);
+}
+/* 두 번째 색 (핵심데이터 시각화) : 카드마다 색이 다름. 올렸을 때 색은 바뀌지 않음 */
+.cm-link-card--primary {
+  --cm-link-card-bg: var(--cm-main-card-hover-bg);
+  --cm-link-card-line: var(--cm-main-card-hover-border);
+}
+.cm-link-card .txt {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  min-width: 0;
+}
+.cm-link-card .tit {
+  font-size: var(--krds-pc-font-size-heading-medium);
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+  color: var(--cm-color-text-secondary);
+}
+.cm-link-card .tit em {
+  font-style: normal;
+  color: var(--cm-color-text-primary);
+}
+.cm-link-card .desc {
+  font-size: var(--krds-pc-font-size-body-medium);
+  line-height: 1.5;
+  color: var(--cm-color-text-basic);
+  word-break: keep-all;
+}
+.cm-link-card .img {
+  flex: none;
+  width: 15rem;
+  height: auto;
+}
+/* 올렸을 때 · 초점 : 오른쪽 아래 모서리가 파이면서 둥근 화살표 버튼이 나타남 (색은 그대로)
+   Figma 는 모서리를 도형 빼기로 그림(748×238 기준 : 파인 자리 77×79, 안쪽 둥글기 41×43, 바깥 꺾이는 두 곳 둥글기 7).
+   폭이 변하는 카드라 CSS 로는 본문 배경색 조각(.go)을 덧대고, 바깥 꺾이는 두 곳에 둥근 모서리 조각(.go::after)을 더함 */
+.cm-link-card .go {
+  position: absolute;
+  right: -0.1rem;
+  bottom: -0.1rem;
+  width: 7.8rem;
+  height: 8rem;
+  border-top: 0.1rem solid var(--cm-link-card-line);
+  border-left: 0.1rem solid var(--cm-link-card-line);
+  border-top-left-radius: 4.1rem 4.3rem;
+  background-color: var(--cm-main-page-bg);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+/* 화살표 버튼 48px */
+.cm-link-card .go::before {
+  content: "";
+  position: absolute;
+  right: 1.1rem;
+  bottom: 1.3rem;
+  width: 4.8rem;
+  height: 4.8rem;
+  border-radius: 50%;
+  background-color: var(--cm-main-go-bg);
+}
+/* 바깥으로 꺾이는 두 곳(파인 자리 위쪽의 카드 오른쪽 변, 왼쪽의 카드 아래 변) : 반지름 7px 둥근 모서리
+   조각마다 카드 색 부분은 비워 두고, 둥근 선과 그 바깥(본문 배경색)만 그림 */
+.cm-link-card .go::after {
+  --cm-link-card-corner: radial-gradient(circle at 0 0, transparent calc(0.6rem - 0.5px), var(--cm-link-card-line) 0.6rem, var(--cm-link-card-line) calc(0.7rem - 0.5px), var(--cm-main-page-bg) 0.7rem);
+  content: "";
+  position: absolute;
+  top: -0.7rem; /* 조각의 아래 · 오른쪽 끝이 파인 자리의 선(1px)과 겹치게 */
+  right: 0;
+  bottom: 0;
+  left: -0.7rem;
+  background: var(--cm-link-card-corner) right top / 0.7rem 0.7rem no-repeat, var(--cm-link-card-corner) left bottom / 0.7rem 0.7rem no-repeat;
+  pointer-events: none;
+}
+.cm-link-card .go .svg-icon {
+  position: absolute;
+  right: 2.3rem;
+  bottom: 2.5rem;
+  width: 2.4rem;
+  height: 2.4rem;
+  background-color: #fff;
+}
+.cm-link-card:hover .go,
+.cm-link-card:focus-visible .go {
+  opacity: 1;
+}
+.cm-link-card:focus-visible {
+  outline: 0.2rem solid var(--cm-color-border-primary);
+  outline-offset: 0.2rem;
+}
+
+/* --------------------------------------------------------------------------
+   5. 공지사항 · 연구 보고서 · 알림판 (신규 컴포넌트 ext_main_board) [Figma 고정값]
+   -------------------------------------------------------------------------- */
+.cm-main-board > .inner {
+  display: grid;
+  grid-template-columns: minmax(0, 491fr) minmax(0, 424fr) minmax(0, 557fr);
+  gap: 2.4rem;
+}
+.cm-main-article {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  min-height: 44.1rem;
+  padding: 4rem;
+  border: 0.1rem solid var(--cm-main-line);
+  border-radius: 1.6rem;
+  background-color: var(--cm-color-surface-white);
+}
+.cm-main-article .head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+.cm-main-article .cm-more {
+  flex: none;
+  color: var(--cm-color-text-basic);
+}
+.cm-main-article .cm-more .svg-icon {
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+/* 5-1. 공지사항 */
+.cm-main-notice {
+  background-color: var(--cm-main-notice-bg);
+}
+.cm-noti-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+.cm-noti-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 1.8rem;
+  border: 0.1rem solid var(--cm-color-border-light);
+  border-radius: 0.8rem;
+  background-color: var(--cm-color-surface-white);
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.cm-noti-item .tit {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  min-width: 0;
+}
+.cm-noti-item .txt {
+  overflow: hidden;
+  font-size: var(--krds-pc-font-size-body-medium);
+  line-height: 1.5;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--cm-color-text-basic);
+}
+.cm-noti-item.is-new .txt {
+  font-weight: var(--krds-font-weight-bold);
+}
+.cm-noti-item .date {
+  font-size: var(--krds-pc-font-size-body-xsmall); /* 13px */
+  line-height: 1.5;
+  color: var(--cm-color-text-disabled-on); /* Figma text-disabled(#8a949e)는 대비 3:1 → 4.5:1 되는 색으로 보정 */
+}
+.cm-noti-item:hover,
+.cm-noti-item:focus-visible {
+  border-color: var(--cm-color-border-primary);
+  box-shadow: 0 0 0.2rem var(--cm-color-shadow1), 0 0.4rem 0.8rem var(--cm-color-shadow2);
+}
+.cm-noti-item:hover .txt,
+.cm-noti-item:focus-visible .txt {
+  color: var(--cm-color-text-primary);
+}
+.cm-noti-item:focus-visible {
+  outline: 0.2rem solid var(--cm-color-border-primary);
+  outline-offset: 0.2rem;
+}
+
+/* 5-2. 연구 보고서 : 표지 넘김 (KRDS 포함 Swiper) */
+.cm-main-report {
+  overflow: hidden;
+  padding-bottom: 0;
+}
+.cm-report {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 33.4rem;
+  margin: 0 -4rem;
+}
+/* 아래 남색 제목 띠 */
+.cm-report::before {
+  content: "";
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 11.4rem;
+  background-color: var(--cm-main-band-bg);
+}
+.cm-report .swiper {
+  height: 100%;
+}
+.cm-report-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 33.4rem;
+  padding-top: 1.7rem;
+}
+/* 표지 : 세로형 · 가로형 모두 자르지 않고 비율대로 보여 줌 (자료실 목록 .cm-cover-item .thumb 와 같은 방식)
+   - 표지 자리 높이는 세로형 기준(221 + 테두리)으로 고정하고, 표지를 아래에 맞춰 남색 띠에 걸치는 모양을 유지
+   - 가로형은 폭 210px 에 맞춰 줄어듦. 표지 없는 자료는 자료실과 같은 기본 표지(cm_cover_default.png)를 넣음 */
+.cm-report-item .cover {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  height: 23.9rem;
+}
+.cm-report-item .cover img {
+  display: block;
+  box-sizing: content-box;
+  width: auto;
+  max-width: 21rem; /* 가로형 : 양옆 이전 · 다음 버튼과 겹치지 않는 폭 */
+  height: auto;
+  max-height: 22.1rem;
+  padding: 0.8rem;
+  border: 0.1rem solid #b1b8be;
+  background-color: #fff;
+}
+.cm-report-item .tit {
+  position: absolute;
+  right: 2rem;
+  bottom: 2.8rem;
+  left: 2rem;
+  overflow: hidden;
+  font-size: var(--krds-pc-font-size-body-medium);
+  line-height: 1.5;
+  text-align: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: #fff;
+}
+.cm-report-item:hover .tit {
+  text-decoration: underline;
+}
+.cm-report-item:focus-visible {
+  outline: 0;
+}
+.cm-report-item:focus-visible .cover img {
+  outline: 0.2rem solid var(--cm-color-border-primary);
+  outline-offset: 0.2rem;
+}
+.cm-report .controller {
+  position: absolute;
+  top: 9.4rem;
+  right: 4rem;
+  left: 4rem;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+}
+.cm-report .controller .cm-round-btn {
+  pointer-events: auto;
+}
+
+/* 5-3. 알림판 : 배너 넘김 (KRDS 포함 Swiper)
+        상자 오른쪽 위가 파이고 그 자리에 쪽수 · 이전 · 다음 · 정지 버튼이 놓임.
+        (Figma 는 한 도형으로 그림. 폭이 변하므로 CSS 는 몸통 + 왼쪽 귀 + 안쪽 둥근 모서리 세 조각으로 표현) */
+.cm-main-banner {
+  --cm-banner-ctrl: 26.2rem; /* 파인 자리 폭 */
+  isolation: isolate;
+  border: 0;
+  background-color: transparent;
+}
+.cm-main-banner::before,
+.cm-main-banner::after {
+  content: "";
+  position: absolute;
+  border: 0.1rem solid var(--cm-main-line);
+  background-color: var(--cm-color-surface-white);
+  pointer-events: none;
+  z-index: -1;
+}
+.cm-main-banner::before {
+  inset: 5.2rem 0 0 0;
+  border-radius: 0 1.6rem 1.6rem 1.6rem;
+}
+.cm-main-banner::after {
+  top: 0;
+  left: 0;
+  width: calc(100% - var(--cm-banner-ctrl));
+  height: 5.3rem;
+  border-bottom: 0;
+  border-radius: 1.6rem 1.6rem 0 0;
+}
+/* 꺾이는 안쪽 모서리 : Figma 도형처럼 둥글게(반지름 약 21px) 파이도록 조각을 덧댐
+   귀의 오른쪽 선과 몸통 윗선이 만나는 직각 부분을 흰색으로 덮고, 그 위에 둥근 선을 그림 */
+.cm-banner-area::before {
+  content: "";
+  position: absolute;
+  top: 3.1rem;
+  left: calc(100% - var(--cm-banner-ctrl) - 0.1rem);
+  z-index: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  background: radial-gradient(circle at 100% 0, transparent calc(2.1rem - 0.5px), var(--cm-main-line) 2.1rem, var(--cm-main-line) calc(2.2rem - 0.5px), var(--cm-color-surface-white) 2.2rem);
+  pointer-events: none;
+}
+.cm-main-banner .head {
+  justify-content: flex-start;
+}
+.cm-banner-all {
+  width: 3.2rem;
+  height: 3.2rem;
+  color: var(--cm-color-text-subtle);
+}
+.cm-banner-area .controller {
+  position: absolute;
+  top: 0.2rem;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+.cm-banner-area .count {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  height: 4rem;
+  padding: 0 1.6rem;
+  border-radius: var(--krds-radius-max);
+  background-color: var(--cm-main-count-bg);
+  font-size: var(--krds-pc-font-size-body-medium);
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+  color: var(--cm-color-text-disabled-on);
+}
+.cm-banner-area .count .current {
+  color: var(--cm-color-text-secondary);
+}
+.cm-banner-area .swiper {
+  overflow: hidden;
+  border-radius: 1.2rem;
+}
+/* 배너 : 디자인된 이미지(477×288 비율)를 그대로 넣고 칸 폭에 맞춰 비율대로 줄임. 글은 이미지의 alt 로 제공 */
+.cm-banner {
+  display: block;
+  overflow: hidden;
+  border-radius: 1.2rem;
+}
+.cm-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 477 / 288;
+  object-fit: cover;
+}
+.cm-banner:focus-visible {
+  outline: 0.3rem solid var(--cm-color-border-primary);
+  outline-offset: -0.3rem;
+}
+
+/* 5-4. 알림판 전체보기 (신규 컴포넌트 ext_main_banner_all, 참고 : 당진시청 알림판 전체보기)
+        화면 전체를 덮는 어두운 층 + 배너 격자. Figma 에 없는 화면이라 참고 사이트 구성에 KRDS 색 · 간격 토큰을 입힘 */
+.cm-banner-all-modal {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background-color: rgba(0, 0, 0, 0.88);
+  color: #fff;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.cm-banner-all-modal:not([open]) {
+  display: none;
+}
+.cm-banner-all-modal::backdrop {
+  background-color: transparent;
+}
+.cm-banner-all-modal > .inner {
+  min-height: calc(100% + 0.1rem); /* 배너가 적어도 층 자체가 스크롤을 받아 뒤 화면으로 넘기지 않게(overscroll-behavior) */
+  padding-top: 9.6rem;
+  padding-bottom: 8rem;
+}
+.cm-banner-all-modal .tit {
+  position: absolute;
+  top: 3.2rem;
+  left: 50%;
+  font-size: var(--krds-pc-font-size-heading-medium);
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+  color: #fff;
+  transform: translateX(-50%);
+}
+.cm-banner-all-modal .btn-close {
+  position: fixed;
+  top: 2.4rem;
+  right: 3.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--krds-size-height-8);
+  height: var(--krds-size-height-8);
+  border-radius: 50%;
+}
+.cm-banner-all-modal .btn-close .svg-icon {
+  width: 3.2rem;
+  height: 3.2rem;
+  background-color: #fff;
+}
+.cm-banner-all-modal .btn-close:hover {
+  background-color: rgba(255, 255, 255, 0.16);
+}
+.cm-banner-all-modal .btn-close:focus {
+  box-shadow: none;
+  outline: 0.2rem solid #fff;
+  outline-offset: 0.2rem;
+}
+.cm-banner-all-list {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--krds-gap-6);
+}
+.cm-banner-all-list .item {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #fff;
+}
+.cm-banner-all-list .item img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 477 / 288;
+  object-fit: cover;
+}
+.cm-banner-all-list .item .more {
+  display: flex;
+  flex: 1 0 auto;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--krds-size-height-7);
+  padding: var(--krds-padding-3) var(--krds-padding-6);
+  background-color: var(--cm-main-band-bg);
+  font-size: var(--krds-pc-font-size-body-medium);
+  font-weight: var(--krds-font-weight-medium);
+  line-height: 1.5;
+  color: #fff;
+}
+.cm-banner-all-list .item:hover .more {
+  text-decoration: underline;
+}
+.cm-banner-all-list .item:focus {
+  box-shadow: none;
+  outline: 0.3rem solid #fff;
+  outline-offset: 0.3rem;
+}
+/* 열려 있는 동안 뒤 화면은 스크롤되지 않게 : KRDS 모달과 같이 body 에 건다.
+   (html 에 걸면 이 사이트 구조에서는 화면이 맨 위로 올라가 버림) */
+body.cm-banner-all-open {
+  overflow: hidden;
+}
+@media (max-width: 1279px) {
+  .cm-banner-all-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+@media (max-width: 1023px) {
+  .cm-banner-all-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--krds-gap-5);
+  }
+}
+@media (max-width: 599px) {
+  .cm-banner-all-modal > .inner {
+    padding-top: 8rem;
+    padding-bottom: 4.8rem;
+  }
+  .cm-banner-all-modal .tit {
+    top: 2.4rem;
+    left: var(--krds-contents-padding-x);
+    font-size: var(--krds-mobile-font-size-heading-medium);
+    transform: none;
+  }
+  .cm-banner-all-modal .btn-close {
+    top: 1.6rem;
+    right: 1.2rem;
+  }
+  .cm-banner-all-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* --------------------------------------------------------------------------
+   6. 원본 데이터 보기 · 유관 사이트 : 아이콘 타일 (신규 컴포넌트 ext_main_link_tile) [Figma 고정값]
+   -------------------------------------------------------------------------- */
+.cm-main-links {
+  padding-bottom: 8rem;
+}
+.cm-main-links > .inner {
+  display: flex;
+  align-items: stretch;
+  gap: 6.4rem;
+}
+.cm-main-links .cm-main-tit {
+  color: var(--cm-color-text-subtle);
+}
+.cm-main-links .group {
+  display: flex;
+  flex-direction: column;
+  gap: 2.4rem;
+}
+.cm-main-links .origin {
+  flex: none;
+  width: 32rem;
+}
+.cm-main-links .related {
+  flex: 1 1 auto;
+  min-width: 0;
+  padding-left: 6.4rem;
+  border-left: 0.1rem solid var(--cm-main-tile-divider);
+}
+.cm-link-tiles {
+  display: flex;
+  justify-content: space-between;
+  gap: 2.4rem 1.6rem;
+}
+.cm-main-links .origin .cm-link-tiles {
+  justify-content: flex-start;
+  gap: 3.2rem;
+}
+.cm-link-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+  width: 14.4rem;
+}
+.cm-link-tile .ico {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 12rem;
+  height: 12rem;
+  border: 0.1rem solid var(--cm-main-tile-bg);
+  border-radius: 1.4rem;
+  background-color: var(--cm-main-tile-bg);
+  transition: var(--krds-transition-base);
+}
+.cm-link-tile .ico img {
+  width: 4.8rem;
+  height: 4.8rem;
+}
+/* 새 창 표시 : 올렸을 때 · 초점에서 나타남 */
+.cm-link-tile .badge {
+  position: absolute;
+  top: -0.3rem;
+  right: -0.1rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background-color: var(--cm-color-element-primary);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.cm-link-tile .badge::before {
+  content: "";
+  position: absolute;
+  inset: 0.7rem;
+  background-color: #fff;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M7.73 2a.53.53 0 1 1 0 1.07H3.2a.13.13 0 0 0-.13.13v9.6c0 .07.06.13.13.13h9.6c.07 0 .13-.06.13-.13V8.27a.53.53 0 1 1 1.07 0v4.53c0 .66-.54 1.2-1.2 1.2H3.2A1.2 1.2 0 0 1 2 12.8V3.2C2 2.54 2.54 2 3.2 2h4.53Zm5.74 0c.29 0 .53.24.53.53v3.6a.53.53 0 1 1-1.07 0V3.82L7.71 9.04a.53.53 0 0 1-.75-.75l5.22-5.22H9.87a.53.53 0 1 1 0-1.07h3.6Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M7.73 2a.53.53 0 1 1 0 1.07H3.2a.13.13 0 0 0-.13.13v9.6c0 .07.06.13.13.13h9.6c.07 0 .13-.06.13-.13V8.27a.53.53 0 1 1 1.07 0v4.53c0 .66-.54 1.2-1.2 1.2H3.2A1.2 1.2 0 0 1 2 12.8V3.2C2 2.54 2.54 2 3.2 2h4.53Zm5.74 0c.29 0 .53.24.53.53v3.6a.53.53 0 1 1-1.07 0V3.82L7.71 9.04a.53.53 0 0 1-.75-.75l5.22-5.22H9.87a.53.53 0 1 1 0-1.07h3.6Z'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+.cm-link-tile .txt {
+  min-height: 5.2rem;
+  font-size: var(--krds-pc-font-size-body-medium);
+  line-height: 1.5;
+  text-align: center;
+  color: var(--cm-color-text-basic);
+  word-break: keep-all;
+}
+.cm-link-tile:hover .ico,
+.cm-link-tile:focus-visible .ico {
+  border-color: var(--cm-color-border-primary);
+  background-color: var(--cm-color-surface-white);
+  box-shadow: 0 0 0.2rem var(--cm-color-shadow2), 0 0.8rem 1.6rem var(--cm-color-shadow3);
+}
+.cm-link-tile:hover .badge,
+.cm-link-tile:focus-visible .badge {
+  opacity: 1;
+}
+.cm-link-tile:hover .txt,
+.cm-link-tile:focus-visible .txt {
+  color: var(--cm-color-text-primary);
+}
+.cm-link-tile:focus-visible {
+  outline: 0.2rem solid var(--cm-color-border-primary);
+  outline-offset: 0.4rem;
+  border-radius: 0.4rem;
+}
+
+/* --------------------------------------------------------------------------
+   7. 바로가기 : 떠 있는 메뉴 (신규 컴포넌트 ext_main_quick, Figma node 11510:62441) [Figma 고정값]
+      본문(1520px)과 겹치지 않는 1840px 이상에서만 보임. 그보다 좁으면 공통 TOP 버튼을 씀
+   -------------------------------------------------------------------------- */
+.cm-quick {
+  position: fixed;
+  top: max(1rem, min(25.5rem, calc(100vh - 48rem)));
+  right: 3rem;
+  z-index: 50;
+  display: none;
+  flex-direction: column;
+  gap: 1rem;
+  width: 11.2rem;
+}
+.cm-quick .box {
+  overflow: hidden;
+  border: 0.1rem solid #dde7f2;
+  border-radius: 1.6rem;
+  background-color: #fff;
+  box-shadow: 0 0.4rem 0.8rem rgba(5, 43, 87, 0.1);
+}
+.cm-quick .tit {
+  padding: 0.8rem 0;
+  background-color: #f2f6fc;
+  font-size: var(--krds-pc-font-size-body-xsmall);
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+  text-align: center;
+  color: #46627f;
+}
+.cm-quick li {
+  position: relative;
+}
+.cm-quick li + li::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 1.6rem;
+  width: 8rem;
+  height: 0.1rem;
+  background-color: #e5edf5;
+}
+.cm-quick li a {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  height: 11rem;
+  padding: 1.6rem 0.8rem;
+  font-size: var(--krds-pc-font-size-body-xsmall);
+  line-height: 1.5;
+  text-align: center;
+  color: #25384d;
+}
+.cm-quick li a img {
+  width: 2rem;
+  height: 2rem;
+}
+.cm-quick li a:hover {
+  background-color: #f2f6fc;
+  color: #0b50d0;
+}
+.cm-quick li a:focus-visible {
+  outline: 0.2rem solid var(--krds-light-color-border-primary);
+  outline-offset: -0.4rem;
+  border-radius: 1.2rem;
+}
+.cm-quick .btn-top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 1.5rem 1.2rem;
+  border-radius: 1.6rem;
+  background-color: #131416;
+  font-size: var(--krds-pc-font-size-body-xsmall);
+  font-weight: var(--krds-font-weight-bold);
+  line-height: 1.5;
+  color: #fff;
+}
+.cm-quick .btn-top:hover {
+  background-color: #33363d;
+}
+.cm-quick .btn-top:focus-visible {
+  outline: 0.2rem solid var(--krds-light-color-border-primary);
+  outline-offset: 0.2rem;
+}
+@media (min-width: 1840px) {
+  .cm-quick {
+    display: flex;
+  }
+  body.cm-main .page-top-button {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   8. 반응형 (Figma 는 PC 1920 화면만 있어 태블릿 · 모바일 배치는 퍼블리싱에서 정함)
+   -------------------------------------------------------------------------- */
+@media (max-width: 1519px) {
+  .cm-hero > .inner {
+    gap: 5.6rem;
+  }
+  .cm-stat-card {
+    padding: 4rem;
+  }
+  .cm-stat-card .graph {
+    width: 24rem;
+  }
+  .cm-history-slide {
+    padding: 6rem 5rem;
+  }
+  .cm-history-slide .side {
+    left: 4rem;
+  }
+  .cm-history-slide .top {
+    gap: 4rem;
+    padding-right: 30rem;
+  }
+  .cm-history-slide .cover {
+    right: 4rem;
+    width: 27rem;
+  }
+  .cm-history-slide .year {
+    font-size: 12rem;
+  }
+  .cm-link-card {
+    gap: 3.2rem;
+  }
+  .cm-main-links > .inner {
+    gap: 4rem;
+  }
+  .cm-main-links .related {
+    padding-left: 4rem;
+  }
+  .cm-link-tile {
+    width: 12.4rem;
+  }
+}
+
+@media (max-width: 1279px) {
+  /* 히어로 : 제목 아래로 검색 */
+  .cm-hero > .inner {
+    flex-direction: column;
+    gap: 4rem;
+    padding-top: 6.4rem;
+    padding-bottom: 6.4rem;
+  }
+  .cm-hero-search {
+    flex: none;
+    width: 100%;
+    max-width: 60rem;
+  }
+  .cm-hero-search .cm-search-recommend {
+    justify-content: center;
+    padding-left: 0;
+  }
+  /* 숫자 카드 : 그림을 줄여 2열 유지 */
+  .cm-stat-card {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 3.2rem;
+  }
+  .cm-stat-card .num {
+    margin-top: 1.2rem;
+  }
+  .cm-stat-card .graph {
+    align-self: center;
+    width: 100%;
+    max-width: 29rem;
+  }
+  /* 변천사 : 카드 높이를 내용에 맞추고 표지를 오른쪽에 작게 */
+  .cm-history-slide {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 20rem;
+    gap: 2.4rem 3.2rem;
+    height: 100%; /* 가장 긴 카드 높이에 맞춤 */
+    min-height: 40rem;
+    padding: 4.8rem 4rem;
+  }
+  .cm-history-slide .top {
+    flex-direction: column;
+    gap: 2rem;
+    grid-column: 1;
+    padding-right: 0;
+  }
+  .cm-history-slide .body {
+    padding-top: 0;
+  }
+  .cm-history-slide .side {
+    position: static;
+    grid-column: 1;
+    flex-direction: row;
+    align-items: center;
+    gap: 2.4rem;
+    align-self: end;
+  }
+  .cm-history-slide .year {
+    font-size: 8rem;
+    line-height: 0.8;
+  }
+  .cm-history-slide .cover {
+    position: static;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+    width: 100%;
+    padding: 1.6rem;
+  }
+  .cm-check-list li {
+    max-width: none;
+  }
+  /* 게시 영역 : 공지 · 보고서 한 줄, 알림판 아래 */
+  .cm-main-board > .inner {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  }
+  .cm-main-banner {
+    grid-column: 1 / -1;
+    min-height: 0;
+  }
+  .cm-banner-area .swiper {
+    max-width: 47.7rem;
+    margin: 0 auto;
+  }
+  /* 링크 타일 : 두 묶음을 위아래로 */
+  .cm-main-links > .inner {
+    flex-direction: column;
+    gap: 4rem;
+  }
+  .cm-main-links .origin {
+    width: auto;
+  }
+  .cm-main-links .related {
+    padding-top: 4rem;
+    padding-left: 0;
+    border-top: 0.1rem solid var(--cm-main-tile-divider);
+    border-left: 0;
+  }
+  .cm-link-tiles,
+  .cm-main-links .origin .cm-link-tiles {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 2.4rem;
+  }
+  .cm-link-tile {
+    width: 14.4rem;
+  }
+}
+
+@media (max-width: 1023px) {
+  .cm-main-data {
+    padding: 5.6rem 0;
+  }
+  .cm-main-sec {
+    padding-top: 6.4rem;
+  }
+  .cm-main-links {
+    padding-bottom: 6.4rem;
+  }
+  .cm-link-cards {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cm-link-card {
+    min-height: 0;
+    padding: 3.2rem;
+  }
+  .cm-link-card .txt {
+    flex: 1 1 auto;
+  }
+  /* 연도 진행 막대 : 이름을 숨기고 연도만 (이름은 화면 낭독용으로 남김) */
+  .cm-history-timeline .label {
+    position: absolute;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    width: 0.1rem;
+    height: 0.1rem;
+    margin: -0.1rem;
+  }
+  .cm-history-timeline {
+    padding-bottom: 1.5rem;
+  }
+  .cm-history-timeline .is-active .year {
+    text-decoration: underline;
+    text-underline-offset: 0.4rem;
+  }
+  .cm-history-nav {
+    gap: 2.4rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .cm-main-tit {
+    font-size: var(--krds-mobile-font-size-heading-medium);
+  }
+  .cm-hero {
+    background-size: 120rem auto;
+  }
+  .cm-hero > .inner {
+    min-height: 0;
+    gap: 3.2rem;
+    padding-top: 4.8rem;
+    padding-bottom: 4.8rem;
+  }
+  .cm-hero-txt .tit {
+    letter-spacing: 0;
+    line-height: 1.4;
+  }
+  .cm-hero-txt .tit .line1 {
+    font-size: 3.4rem;
+  }
+  .cm-hero-txt .tit .line2 {
+    margin-top: -0.4rem;
+    font-size: 3.2rem;
+  }
+  .cm-hero-txt .desc {
+    font-size: var(--krds-mobile-font-size-body-medium);
+    font-weight: var(--krds-font-weight-medium);
+    word-break: keep-all;
+  }
+  .cm-hero-form .krds-input {
+    height: 5.6rem;
+    padding: 0 6.8rem 0 2.4rem;
+    border-width: 0.2rem;
+    font-size: var(--krds-mobile-font-size-body-large);
+  }
+  .cm-hero-form .btn-submit {
+    width: 5.6rem;
+    height: 5.6rem;
+  }
+  .cm-hero-form .btn-submit .svg-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+  .cm-hero-search .cm-search-recommend {
+    align-items: center;
+  }
+  .cm-hero-search .cm-search-chips {
+    justify-content: center;
+  }
+  .cm-main-data {
+    padding: 4.8rem 0;
+  }
+  .cm-main-data .krds-tab-area {
+    gap: 2.4rem;
+  }
+  .tab.cm-tab-text > ul {
+    gap: 0.8rem 0;
+  }
+  .tab.cm-tab-text .btn-tab {
+    font-size: var(--krds-mobile-font-size-heading-medium);
+  }
+  .cm-stat-cards {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.6rem;
+  }
+  .cm-stat-card {
+    padding: 2.4rem;
+  }
+  .cm-stat-card .tit {
+    font-size: var(--krds-mobile-font-size-heading-small);
+  }
+  .cm-stat-card .num {
+    font-size: var(--krds-mobile-font-size-heading-large);
+  }
+  .cm-stat-card .tag {
+    font-size: var(--krds-mobile-font-size-body-medium);
+  }
+  .cm-stat-source {
+    text-align: left;
+  }
+  .cm-history {
+    gap: 3.2rem;
+  }
+  .cm-history-stage {
+    padding-top: 4.8rem;
+  }
+  .cm-history-slides {
+    --cm-history-y1: -1.6rem;
+    --cm-history-y2: -3.2rem;
+    --cm-history-y3: -4.8rem;
+    --cm-history-s1: 0.96;
+    --cm-history-s2: 0.92;
+    --cm-history-s3: 0.88;
+  }
+  .cm-history-slide {
+    border-radius: 2rem;
+  }
+  /* 변천사 : 표지를 아래로 */
+  .cm-history-slide {
+    grid-template-columns: minmax(0, 1fr);
+    min-height: 0;
+    padding: 3.2rem 2.4rem;
+  }
+  .cm-history-slide .body .tit {
+    font-size: var(--krds-mobile-font-size-heading-large);
+  }
+  .cm-check-list li {
+    font-size: var(--krds-mobile-font-size-body-large);
+  }
+  .cm-history-slide .year {
+    font-size: 6.4rem;
+  }
+  .cm-history-slide .cover {
+    grid-column: 1;
+    grid-row: auto;
+    justify-self: center;
+    max-width: 20rem;
+  }
+  .cm-history-nav {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 2rem;
+  }
+  .cm-history-timeline .year {
+    font-size: var(--krds-mobile-font-size-body-medium);
+  }
+  .cm-history-timeline::before,
+  .cm-history-timeline::after {
+    top: 3rem;
+  }
+  .cm-history-point {
+    top: calc(3rem + 0.35rem);
+  }
+  .cm-history-arrows {
+    justify-content: center;
+  }
+  .cm-main-sec {
+    padding-top: 4.8rem;
+  }
+  .cm-main-links {
+    padding-bottom: 4.8rem;
+  }
+  .cm-link-cards {
+    margin-top: 1.6rem;
+  }
+  .cm-link-card {
+    gap: 1.6rem;
+    padding: 2.4rem;
+  }
+  .cm-link-card .tit {
+    font-size: var(--krds-mobile-font-size-heading-medium);
+  }
+  .cm-link-card .desc {
+    font-size: var(--krds-mobile-font-size-body-medium);
+  }
+  .cm-link-card .img {
+    width: 9rem;
+  }
+  .cm-link-card .go {
+    display: none;
+  }
+  .cm-main-board > .inner {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 1.6rem;
+  }
+  .cm-main-article {
+    gap: 2rem;
+    min-height: 0;
+    padding: 2.4rem;
+  }
+  .cm-main-report {
+    padding-bottom: 0;
+  }
+  .cm-noti-item .txt {
+    font-size: var(--krds-mobile-font-size-body-medium);
+  }
+  .cm-report {
+    margin: 0 -2.4rem;
+  }
+  .cm-report .controller {
+    right: 2.4rem;
+    left: 2.4rem;
+  }
+  .cm-main-banner {
+    --cm-banner-ctrl: 23rem;
+    padding-top: 6.8rem;
+  }
+  .cm-main-banner .head {
+    position: absolute;
+    top: 0.9rem;
+    left: 2.4rem;
+  }
+  .cm-banner-area .controller {
+    gap: 0.6rem;
+  }
+  .cm-banner-area .count {
+    padding: 0 1.2rem;
+    font-size: var(--krds-mobile-font-size-body-small);
+  }
+  .cm-link-tiles,
+  .cm-main-links .origin .cm-link-tiles {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(10rem, 1fr));
+    gap: 2rem 1.2rem;
+  }
+  .cm-link-tile {
+    gap: 1rem;
+    width: 100%;
+  }
+  .cm-link-tile .ico {
+    width: 8.8rem;
+    height: 8.8rem;
+  }
+  .cm-link-tile .ico img {
+    width: 4rem;
+    height: 4rem;
+  }
+  .cm-link-tile .txt {
+    font-size: var(--krds-mobile-font-size-body-small);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cm-history-item,
+  .cm-history-slide,
+  .cm-history-slide > * {
+    transition: none;
+  }
+  .cm-history-timeline::after {
+    transition: none;
+  }
+  .cm-history-point,
+  .cm-history-point::before,
+  .cm-history-point::after {
+    animation: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   9. 선명하게(고대비) 모드 · 시스템 어두운 모드
+      - 숫자 카드 · 변천사 카드도 어두운 면으로 바꿉니다. (인포그래픽이 SVG 라 색을 바꿀 수 있음)
+      - 바로가기도 어두운 상자로 바꿉니다. 알림판 배너 이미지와 보고서 표지는 이미지라 그대로 둡니다.
+      - 나머지 면 · 선 · 글자는 KRDS 고대비 토큰으로 바꿉니다.
+   -------------------------------------------------------------------------- */
+[data-krds-mode=high-contrast] body.cm-main {
+  --cm-main-line: var(--krds-high-contrast-color-border-gray-light);
+  --cm-main-notice-bg: var(--krds-high-contrast-color-surface-gray-subtler);
+  --cm-main-card-bg: var(--krds-high-contrast-color-surface-secondary-subtler);
+  --cm-main-card-border: var(--krds-high-contrast-color-border-gray-light);
+  --cm-main-card-hover-bg: var(--krds-high-contrast-color-surface-primary-subtler);
+  --cm-main-card-hover-border: var(--krds-high-contrast-color-border-primary-light);
+  --cm-main-go-bg: var(--krds-high-contrast-color-border-primary-light);
+  --cm-main-tile-bg: var(--krds-high-contrast-color-surface-gray-subtler);
+  --cm-main-tile-divider: var(--krds-high-contrast-color-border-gray-light);
+  --cm-main-round-border: var(--krds-high-contrast-color-border-gray-light);
+  --cm-main-round-hover: var(--krds-high-contrast-color-surface-gray-subtler);
+  --cm-main-count-bg: var(--krds-high-contrast-color-surface-gray-subtler);
+  --cm-main-page-bg: var(--krds-high-contrast-color-background-white);
+}
+/* 숫자로 보는 특수교육 · 실태조사변천사 : 띠는 짙은 남색, 카드는 어두운 면으로 */
+[data-krds-mode=high-contrast] .cm-main-data {
+  background-color: var(--krds-high-contrast-color-surface-primary-subtler);
+}
+[data-krds-mode=high-contrast] .cm-stat-card {
+  border: 0.1rem solid var(--krds-high-contrast-color-border-gray-light);
+  background-color: var(--krds-high-contrast-color-surface-gray-subtler);
+  color: var(--krds-high-contrast-color-text-basic);
+}
+[data-krds-mode=high-contrast] .cm-stat-card .tag {
+  border-color: var(--krds-high-contrast-color-border-gray);
+  color: var(--krds-high-contrast-color-text-subtle);
+}
+/* 인포그래픽 SVG : 그림에 적힌 색(fill · stroke 속성)을 어두운 바탕용으로 바꿈. 파란 도형과 그 안의 흰 글자는 그대로 */
+[data-krds-mode=high-contrast] .cm-stat-svg [fill="#1E2124"] {
+  fill: var(--krds-high-contrast-color-text-basic);
+}
+[data-krds-mode=high-contrast] .cm-stat-svg [fill="#61758F"] {
+  fill: var(--krds-color-high-contrast-gray-40);
+}
+[data-krds-mode=high-contrast] .cm-stat-svg [fill="#0B78CB"]:not(path) {
+  fill: var(--krds-color-high-contrast-information-30);
+}
+[data-krds-mode=high-contrast] .cm-stat-svg [stroke="#000"] {
+  stroke: var(--krds-color-high-contrast-gray-0);
+}
+[data-krds-mode=high-contrast] .cm-stat-svg linearGradient[id="st1_c"] stop {
+  stop-color: var(--krds-color-high-contrast-gray-0);
+}
+[data-krds-mode=high-contrast] .cm-stat-svg rect[fill="#fff"] {
+  fill: var(--krds-high-contrast-color-surface-gray-subtler);
+}
+/* 말풍선 : 어두운 바탕에서는 밝은 상자 + 어두운 글자로 뒤집음 */
+[data-krds-mode=high-contrast] .cm-stat-svg .m-pop-b [fill="#1E2124"] {
+  fill: var(--krds-high-contrast-color-text-basic);
+}
+[data-krds-mode=high-contrast] .cm-stat-svg .m-pop-b [fill="#fff"] {
+  fill: var(--krds-color-high-contrast-gray-95);
+}
+/* 화살표 : 곱하기 혼합은 어두운 바탕에서 보이지 않아 보통 혼합으로 */
+[data-krds-mode=high-contrast] .cm-stat-svg .m-wipe-right {
+  mix-blend-mode: normal !important;
+}
+/* 변천사 카드 */
+[data-krds-mode=high-contrast] .cm-history-item[data-offset="0"] .cm-history-slide {
+  border-color: var(--krds-high-contrast-color-border-gray);
+  background-color: var(--krds-high-contrast-color-surface-gray-subtler);
+}
+[data-krds-mode=high-contrast] .cm-history-slide {
+  color: var(--krds-high-contrast-color-text-basic);
+}
+[data-krds-mode=high-contrast] .cm-history-slide .eyebrow {
+  color: var(--krds-high-contrast-color-text-primary);
+}
+[data-krds-mode=high-contrast] .cm-history-slide .eyebrow .sub {
+  color: var(--krds-color-high-contrast-primary-30);
+}
+[data-krds-mode=high-contrast] .cm-history-slide .idx {
+  background-color: var(--krds-high-contrast-color-text-primary);
+  color: var(--krds-color-high-contrast-primary-95);
+}
+[data-krds-mode=high-contrast] .cm-history-slide .body .tit {
+  color: var(--krds-high-contrast-color-text-secondary);
+}
+[data-krds-mode=high-contrast] .cm-check-list li::before {
+  filter: invert(1);
+}
+[data-krds-mode=high-contrast] .cm-check-list em {
+  color: var(--krds-high-contrast-color-text-primary);
+}
+[data-krds-mode=high-contrast] .cm-history-slide .year {
+  color: var(--krds-color-high-contrast-gray-0); /* 어두운 바탕에서는 큰 연도를 흰색으로 또렷하게 */
+}
+[data-krds-mode=high-contrast] .cm-history-slide .krds-btn.tertiary {
+  border-color: var(--krds-high-contrast-color-text-subtle);
+  color: var(--krds-high-contrast-color-text-basic);
+}
+[data-krds-mode=high-contrast] .cm-history-slide .krds-btn.tertiary:hover {
+  background-color: var(--krds-high-contrast-color-surface-white-subtler);
+}
+[data-krds-mode=high-contrast] .cm-history-slide .krds-btn .svg-icon {
+  background-color: var(--krds-high-contrast-color-text-basic);
+}
+[data-krds-mode=high-contrast] .cm-history-slide .cover {
+  background-color: var(--krds-high-contrast-color-surface-white-subtler);
+}
+/* 바로가기 : 어두운 상자 + 밝은 글자, TOP 버튼은 검은 배경에서 보이도록 밝은 버튼으로 뒤집음 */
+[data-krds-mode=high-contrast] .cm-quick .box {
+  border-color: var(--krds-high-contrast-color-border-gray-light);
+  background-color: var(--krds-high-contrast-color-surface-gray-subtler);
+  box-shadow: none;
+}
+[data-krds-mode=high-contrast] .cm-quick .tit {
+  background-color: var(--krds-high-contrast-color-surface-white-subtler);
+  color: var(--krds-high-contrast-color-text-subtle);
+}
+[data-krds-mode=high-contrast] .cm-quick li + li::before {
+  background-color: var(--krds-high-contrast-color-border-gray-light);
+}
+[data-krds-mode=high-contrast] .cm-quick li a {
+  color: var(--krds-high-contrast-color-text-basic);
+}
+[data-krds-mode=high-contrast] .cm-quick li a:hover {
+  background-color: var(--krds-high-contrast-color-surface-white-subtler);
+  color: var(--krds-high-contrast-color-text-primary);
+}
+[data-krds-mode=high-contrast] .cm-quick li a img {
+  filter: brightness(1.5);
+}
+[data-krds-mode=high-contrast] .cm-quick .btn-top {
+  background-color: var(--krds-high-contrast-color-text-basic);
+  color: var(--krds-color-high-contrast-gray-95);
+}
+[data-krds-mode=high-contrast] .cm-quick .btn-top:hover {
+  background-color: var(--krds-high-contrast-color-text-subtle);
+}
+[data-krds-mode=high-contrast] .cm-hero {
+  background-image: none;
+}
+[data-krds-mode=high-contrast] .cm-hero-bg,
+[data-krds-mode=high-contrast] .cm-hero-toggle {
+  display: none;
+}
+/* 히어로 제목 · 링크 카드 제목 : 어두운 바탕에서는 강조 색 없이 모두 흰색 */
+[data-krds-mode=high-contrast] .cm-hero-txt .tit .line1,
+[data-krds-mode=high-contrast] .cm-hero-txt .tit .line1 em,
+[data-krds-mode=high-contrast] .cm-hero-txt .tit .line2,
+[data-krds-mode=high-contrast] .cm-link-card .tit,
+[data-krds-mode=high-contrast] .cm-link-card .tit em {
+  color: var(--krds-color-high-contrast-gray-0);
+}
+[data-krds-mode=high-contrast] .cm-link-tile .ico img,
+[data-krds-mode=high-contrast] .cm-link-card .img {
+  filter: brightness(1.15);
+}
+@media (prefers-color-scheme: dark) {
+  [data-krds-mode=theme] body.cm-main {
+    --cm-main-line: var(--krds-high-contrast-color-border-gray-light);
+    --cm-main-notice-bg: var(--krds-high-contrast-color-surface-gray-subtler);
+    --cm-main-card-bg: var(--krds-high-contrast-color-surface-secondary-subtler);
+    --cm-main-card-border: var(--krds-high-contrast-color-border-gray-light);
+    --cm-main-card-hover-bg: var(--krds-high-contrast-color-surface-primary-subtler);
+    --cm-main-card-hover-border: var(--krds-high-contrast-color-border-primary-light);
+    --cm-main-go-bg: var(--krds-high-contrast-color-border-primary-light);
+    --cm-main-tile-bg: var(--krds-high-contrast-color-surface-gray-subtler);
+    --cm-main-tile-divider: var(--krds-high-contrast-color-border-gray-light);
+    --cm-main-round-border: var(--krds-high-contrast-color-border-gray-light);
+    --cm-main-round-hover: var(--krds-high-contrast-color-surface-gray-subtler);
+    --cm-main-count-bg: var(--krds-high-contrast-color-surface-gray-subtler);
+    --cm-main-page-bg: var(--krds-high-contrast-color-background-white);
+  }
+  /* 숫자로 보는 특수교육 · 실태조사변천사 : 띠는 짙은 남색, 카드는 어두운 면으로 */
+  [data-krds-mode=theme] .cm-main-data {
+    background-color: var(--krds-high-contrast-color-surface-primary-subtler);
+  }
+  [data-krds-mode=theme] .cm-stat-card {
+    border: 0.1rem solid var(--krds-high-contrast-color-border-gray-light);
+    background-color: var(--krds-high-contrast-color-surface-gray-subtler);
+    color: var(--krds-high-contrast-color-text-basic);
+  }
+  [data-krds-mode=theme] .cm-stat-card .tag {
+    border-color: var(--krds-high-contrast-color-border-gray);
+    color: var(--krds-high-contrast-color-text-subtle);
+  }
+  /* 인포그래픽 SVG : 그림에 적힌 색(fill · stroke 속성)을 어두운 바탕용으로 바꿈. 파란 도형과 그 안의 흰 글자는 그대로 */
+  [data-krds-mode=theme] .cm-stat-svg [fill="#1E2124"] {
+    fill: var(--krds-high-contrast-color-text-basic);
+  }
+  [data-krds-mode=theme] .cm-stat-svg [fill="#61758F"] {
+    fill: var(--krds-color-high-contrast-gray-40);
+  }
+  [data-krds-mode=theme] .cm-stat-svg [fill="#0B78CB"]:not(path) {
+    fill: var(--krds-color-high-contrast-information-30);
+  }
+  [data-krds-mode=theme] .cm-stat-svg [stroke="#000"] {
+    stroke: var(--krds-color-high-contrast-gray-0);
+  }
+  [data-krds-mode=theme] .cm-stat-svg linearGradient[id="st1_c"] stop {
+    stop-color: var(--krds-color-high-contrast-gray-0);
+  }
+  [data-krds-mode=theme] .cm-stat-svg rect[fill="#fff"] {
+    fill: var(--krds-high-contrast-color-surface-gray-subtler);
+  }
+  /* 말풍선 : 어두운 바탕에서는 밝은 상자 + 어두운 글자로 뒤집음 */
+  [data-krds-mode=theme] .cm-stat-svg .m-pop-b [fill="#1E2124"] {
+    fill: var(--krds-high-contrast-color-text-basic);
+  }
+  [data-krds-mode=theme] .cm-stat-svg .m-pop-b [fill="#fff"] {
+    fill: var(--krds-color-high-contrast-gray-95);
+  }
+  /* 화살표 : 곱하기 혼합은 어두운 바탕에서 보이지 않아 보통 혼합으로 */
+  [data-krds-mode=theme] .cm-stat-svg .m-wipe-right {
+    mix-blend-mode: normal !important;
+  }
+  /* 변천사 카드 */
+  [data-krds-mode=theme] .cm-history-item[data-offset="0"] .cm-history-slide {
+    border-color: var(--krds-high-contrast-color-border-gray);
+    background-color: var(--krds-high-contrast-color-surface-gray-subtler);
+  }
+  [data-krds-mode=theme] .cm-history-slide {
+    color: var(--krds-high-contrast-color-text-basic);
+  }
+  [data-krds-mode=theme] .cm-history-slide .eyebrow {
+    color: var(--krds-high-contrast-color-text-primary);
+  }
+  [data-krds-mode=theme] .cm-history-slide .eyebrow .sub {
+    color: var(--krds-color-high-contrast-primary-30);
+  }
+  [data-krds-mode=theme] .cm-history-slide .idx {
+    background-color: var(--krds-high-contrast-color-text-primary);
+    color: var(--krds-color-high-contrast-primary-95);
+  }
+  [data-krds-mode=theme] .cm-history-slide .body .tit {
+    color: var(--krds-high-contrast-color-text-secondary);
+  }
+  [data-krds-mode=theme] .cm-check-list li::before {
+    filter: invert(1);
+  }
+  [data-krds-mode=theme] .cm-check-list em {
+    color: var(--krds-high-contrast-color-text-primary);
+  }
+  [data-krds-mode=theme] .cm-history-slide .year {
+    color: var(--krds-color-high-contrast-gray-0); /* 어두운 바탕에서는 큰 연도를 흰색으로 또렷하게 */
+  }
+  [data-krds-mode=theme] .cm-history-slide .krds-btn.tertiary {
+    border-color: var(--krds-high-contrast-color-text-subtle);
+    color: var(--krds-high-contrast-color-text-basic);
+  }
+  [data-krds-mode=theme] .cm-history-slide .krds-btn.tertiary:hover {
+    background-color: var(--krds-high-contrast-color-surface-white-subtler);
+  }
+  [data-krds-mode=theme] .cm-history-slide .krds-btn .svg-icon {
+    background-color: var(--krds-high-contrast-color-text-basic);
+  }
+  [data-krds-mode=theme] .cm-history-slide .cover {
+    background-color: var(--krds-high-contrast-color-surface-white-subtler);
+  }
+  /* 바로가기 : 어두운 상자 + 밝은 글자, TOP 버튼은 검은 배경에서 보이도록 밝은 버튼으로 뒤집음 */
+  [data-krds-mode=theme] .cm-quick .box {
+    border-color: var(--krds-high-contrast-color-border-gray-light);
+    background-color: var(--krds-high-contrast-color-surface-gray-subtler);
+    box-shadow: none;
+  }
+  [data-krds-mode=theme] .cm-quick .tit {
+    background-color: var(--krds-high-contrast-color-surface-white-subtler);
+    color: var(--krds-high-contrast-color-text-subtle);
+  }
+  [data-krds-mode=theme] .cm-quick li + li::before {
+    background-color: var(--krds-high-contrast-color-border-gray-light);
+  }
+  [data-krds-mode=theme] .cm-quick li a {
+    color: var(--krds-high-contrast-color-text-basic);
+  }
+  [data-krds-mode=theme] .cm-quick li a:hover {
+    background-color: var(--krds-high-contrast-color-surface-white-subtler);
+    color: var(--krds-high-contrast-color-text-primary);
+  }
+  [data-krds-mode=theme] .cm-quick li a img {
+    filter: brightness(1.5);
+  }
+  [data-krds-mode=theme] .cm-quick .btn-top {
+    background-color: var(--krds-high-contrast-color-text-basic);
+    color: var(--krds-color-high-contrast-gray-95);
+  }
+  [data-krds-mode=theme] .cm-quick .btn-top:hover {
+    background-color: var(--krds-high-contrast-color-text-subtle);
+  }
+  [data-krds-mode=theme] .cm-hero {
+    background-image: none;
+  }
+  [data-krds-mode=theme] .cm-hero-bg,
+  [data-krds-mode=theme] .cm-hero-toggle {
+    display: none;
+  }
+  [data-krds-mode=theme] .cm-hero-txt .tit .line1,
+  [data-krds-mode=theme] .cm-hero-txt .tit .line1 em,
+  [data-krds-mode=theme] .cm-hero-txt .tit .line2,
+  [data-krds-mode=theme] .cm-link-card .tit,
+  [data-krds-mode=theme] .cm-link-card .tit em {
+    color: var(--krds-color-high-contrast-gray-0);
+  }
+  [data-krds-mode=theme] .cm-link-tile .ico img,
+  [data-krds-mode=theme] .cm-link-card .img {
+    filter: brightness(1.15);
+  }
+}
