@@ -19,10 +19,8 @@
     <link rel="stylesheet" href="../../krds/resources/css/component/output.css" /><!-- common.css + component.css 통합본 (component.css의 잘못된 이미지 경로 보정) -->
 
     <!-- Custom -->
-    <script src="../../js/adm/adm-custom.js" defer></script>
     <link rel="stylesheet" href="../../css/common/krds-base.css"><!-- KRDS 기본 보정 -->
     <link rel="stylesheet" href="../../css/common/krds-custom.css">
-    <link rel="stylesheet" href="../../css/adm/admin-custom.css">
 
     <!-- styleguide -->
     <script src="https://cdn.jsdelivr.net/npm/prismjs/plugins/toolbar/prism-toolbar.min.js"></script>
@@ -49,7 +47,7 @@
                 </nav>
 
                 <!-- ==========================================================
-                    컴포넌트 코드 조회 순서: 사이트(kr, adm) → 공통(_common) → KRDS 원본(krds)
+                    컴포넌트 코드 조회 순서: 사용자(html/kr) → 공통(html/common) → KRDS 원본(krds)
                     - KRDS 원본: krds/html/code/컴포넌트명.html (수정 금지)
                     - 변형: 원본명--변형명.html / 신규: ext_이름.html
                     - 변형 섹션은 해당 KRDS 원본 섹션 바로 뒤에 추가합니다.
@@ -247,29 +245,6 @@
                                     <div class="accordion-body">
                                         <div class="g-code-box">
                                             <pre data-src="../kr/code/button--sample.html"></pre>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-                -->
-
-                <!-- [변형 샘플] adm: html/adm/code/button--sample.html (변형 시 주석 해제)
-                <section class="g-conts-area">
-                    <h4 class="con-tit">button--sample <small>(adm)</small></h4>
-                    <div class="g-example-wrap">
-                        <div class="g-example includeJs" data-include-file="../adm/code/button--sample.html"></div>
-                        <div class="g-code-wrap krds-accordion">
-                            <div class="accordion-item">
-                                <h5 class="accordion-header">
-                                    <button type="button" class="btn-accordion" aria-expanded="true" id="accordionHeaderSample01" aria-controls="accordionCollapseSample01">코드 확인하기</button>
-                                </h5>
-                                <div class="accordion-collapse collapse" role="region" id="aaccordionCollapseSample01" aria-labelledby="accordionHeaderSample01">
-                                    <div class="accordion-body">
-                                        <div class="g-code-box">
-                                            <pre data-src="../adm/code/button--sample.html"></pre>
                                         </div>
                                     </div>
                                 </div>

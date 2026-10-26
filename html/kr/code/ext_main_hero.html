@@ -6,7 +6,7 @@
   - 제목 글꼴 Gmarket Sans Bold 는 KRDS 글꼴이 아닙니다. (fonts/common/GmarketSansBold.woff)
   - 폼 클래스 .cm-search-top-form : 빈 값 확인 · 결과 화면 이동은 통합검색 공통 스크립트를 그대로 씁니다.
   - 추천 검색어는 헤더 통합검색(ext_search_popup)과 같은 .cm-search-recommend 를 씁니다. 누르면 바로 검색합니다.
-  - 배경 영상(video/kr/main_hero_loop.mp4, 1920×574 · 약 8초 · 소리 없음)은 꾸밈용이며 불투명도 20%로 깝니다. (js/kr/main.js cmMainHero)
+  - 배경 영상(img/kr/main/main_hero_loop.mp4, 1920×574 · 약 8초 · 소리 없음)은 꾸밈용이며 불투명도 20%로 깝니다. (js/kr/main.js cmMainHero)
     동작 줄이기 설정 · 데이터 절약 모드 · 모바일(767px 이하) · 선명하게 모드에서는 불러오지 않고 정지 이미지(hero_bg.png)를 씁니다.
     5초 넘게 움직이므로 정지 · 재생 버튼(.cm-hero-toggle)을 둡니다. 영상이 재생될 때만 보입니다.
     버튼은 히어로 디자인을 해치지 않게 평소에는 작은 회색 글자 + 아이콘만 보이고, 올리거나 초점이 가면 알약 모양 바탕이 나타납니다.
@@ -16,7 +16,7 @@
   <!-- 배경 영상 : 꾸밈용(소리 없음, 반복). 스크립트(js/kr/main.js cmMainHero)가 조건이 맞을 때만 불러와 재생합니다.
        동작 줄이기 설정 · 데이터 절약 모드 · 모바일(767px 이하)에서는 불러오지 않고 정지 이미지(hero_bg.png)를 씁니다. -->
   <div class="cm-hero-bg" aria-hidden="true">
-    <video class="cm-hero-video" muted loop playsinline preload="none" tabindex="-1" data-src="{{root}}video/kr/main_hero_loop.mp4"></video>
+    <video class="cm-hero-video" muted loop playsinline preload="none" tabindex="-1" data-src="{{root}}img/kr/main/main_hero_loop.mp4"></video>
   </div>
   <div class="inner">
     <div class="cm-hero-txt">

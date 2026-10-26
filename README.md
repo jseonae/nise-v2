@@ -4,13 +4,12 @@ NISE Center Data Platform
 ## 디렉토리 구조
 
 ```
-html/         kr/ 사용자 화면, adm/ 관리자 화면, common/ 예제·HTML 조각, styleguide/ 가이드 화면
-tmpl/         kr/ 사용자 공통 템플릿, adm/ 관리자 공통 템플릿 (html/과 같은 위치)
-css/          common/ 공통 보정, kr/ 사용자, adm/ 관리자, styleguide/ 가이드 스타일
-js/           common/ 공통 UI·그래프·엑셀·라이브러리, kr/ 사용자, adm/ 관리자, styleguide/ 가이드 스크립트
-img/          common/ 공통 이미지, kr/ 사용자 이미지
+html/         kr/ 사용자 화면, common/ 예제·HTML 조각, styleguide/ 가이드 화면
+tmpl/         kr/ 사용자 공통 템플릿 (html/과 같은 위치)
+css/          common/ 공통 보정, kr/ 사용자, styleguide/ 가이드 스타일
+js/           common/ 공통 UI·그래프·엑셀·라이브러리, kr/ 사용자, styleguide/ 가이드 스크립트
+img/          common/ 공통 이미지, kr/ 사용자 이미지·메인 비주얼 영상
 fonts/        common/ 프로젝트 추가 글꼴
-video/        kr/ 사용자 영상
 data/         kr/ 통계 JSON·조사 변천사 XLSX
 docs/         메뉴 구조·유지보수 문서
 _tools/       경로 검사·HTML/SVG 생성 도구
@@ -28,7 +27,6 @@ python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
 - 메인: http://127.0.0.1:8000/html/kr/main.html
-- 관리자 골격: http://127.0.0.1:8000/html/adm/dashboard.html
 - 스타일가이드: http://127.0.0.1:8000/html/styleguide/styleguide.html
 - 조사 변천사 데이터 확인: http://127.0.0.1:8000/html/kr/stat/survey_history_list.html?check=1
 
@@ -68,3 +66,5 @@ python3 _tools/build_main_stat_svg.py
 ## 디렉토리 이전
 
 파일 이동표와 URL 변경 사항은 `docs/directory-migration.md`를 참고합니다. 기존 사용자 화면 URL의 `/kr/html/`은 `/html/kr/`로 변경되었습니다. 기존 URL을 운영 중이었다면 웹 서버에서 별도의 리다이렉트 또는 경로 매핑을 적용해야 합니다. 이 저장소에서는 운영 서버 설정을 변경하지 않습니다.
+
+메인 비주얼 영상은 `img/kr/main/main_hero_loop.mp4`에 둡니다. 사용하지 않는 관리자용 HTML·템플릿·CSS·JS는 제거했습니다.
