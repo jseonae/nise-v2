@@ -1777,9 +1777,9 @@ p {
   justify-content: space-between;
   gap: var(--krds-gap-6);
   padding: var(--krds-padding-9) var(--krds-padding-10);
-  border: 0.1rem solid var(--cm-color-border-secondary-20);
+  border: 0.1rem solid var(--krds-color-light-secondary-10);
   border-radius: var(--krds-radius-xlarge2);
-  background-color: var(--cm-color-box-surface);
+  background-color:var(--krds-color-light-secondary-5);
 }
 .cm-survey-head .tit {
   font-size: var(--krds-pc-font-size-heading-medium);
