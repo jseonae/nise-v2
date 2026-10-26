@@ -1,70 +1,69 @@
-# nise
-NISE Center Data Platform
+# nise-v2
+
+특수교육 실태조사 데이터 활용 플랫폼의 프런트엔드 퍼블리싱 프로젝트입니다. HTML·CSS·JavaScript와 KRDS를 사용하며, 사용자 화면·공통 컴포넌트·스타일가이드를 포함합니다.
+
+문서의 프로젝트 경로는 저장소 루트를 기준으로 합니다. 현재 구조와 코드 기준일은 2026-10-26입니다.
+
+## 문서 안내
+
+| 문서 | 내용 |
+|---|---|
+| [화면·메뉴 구성](docs/ia.md) | 화면 목록, 메뉴 노출 상태, 공통 템플릿 |
+| [개발·유지보수](docs/maintenance.md) | 주요 파일, 로딩 순서, 데이터 수정, 검사·생성 도구 |
+| [디렉토리 변경 이력](docs/directory-migration.md) | 이전·현재 경로, 영상 이동, 관리자 파일 제거 |
+| [조사 변천사 데이터](data/kr/survey_history/README.md) | XLSX 작성 방법과 화면 확인 절차 |
+| [KRDS 반입 기록](krds/KRDS_VERSION.md) | 버전·출처, 보존 범위, 프로젝트 확장 위치 |
 
 ## 디렉토리 구조
 
-```
-html/         kr/ 사용자 화면, common/ 예제·HTML 조각, styleguide/ 가이드 화면
-tmpl/         kr/ 사용자 공통 템플릿 (html/과 같은 위치)
-css/          common/ 공통 보정, kr/ 사용자, styleguide/ 가이드 스타일
-js/           common/ 공통 UI·그래프·엑셀·라이브러리, kr/ 사용자, styleguide/ 가이드 스크립트
-img/          common/ 공통 이미지, kr/ 사용자 이미지·메인 비주얼 영상
-fonts/        common/ 프로젝트 추가 글꼴
-data/         kr/ 통계 JSON·조사 변천사 XLSX
-docs/         메뉴 구조·유지보수 문서
-_tools/       경로 검사·HTML/SVG 생성 도구
-krds/         KRDS 원본 (수정 금지, 버전은 krds/KRDS_VERSION.md)
+파일 유형을 최상위에서 구분하고, 그 안에서 공통(`common`)과 사용자(`kr`)를 구분합니다.
+
+```text
+html/       kr/ 사용자 화면, common/ 예제·HTML 조각, styleguide/ 가이드 화면
+tmpl/       kr/ 사용자 공통 템플릿 (html/과 같은 위치)
+css/        common/ 공통 보정, kr/ 사용자, styleguide/ 가이드 스타일
+js/         common/ 공통 UI·라이브러리, kr/ 사용자, styleguide/ 가이드 스크립트
+img/        common/ 공통 이미지, kr/ 사용자 이미지·메인 비주얼 영상
+fonts/      common/ 프로젝트 추가 글꼴
+data/       kr/ 특수교육 현황 JSON·조사 변천사 XLSX
+docs/       화면·유지보수·변경 이력 문서
+_tools/     경로·문법 검사와 HTML·SVG 생성 도구
+krds/       KRDS 리소스와 컴포넌트 예제 원본 묶음
 ```
 
-CSS 불러오는 순서: KRDS 원본 → `css/common/krds-base.css`(KRDS가 가이드만 있고 코드를 주지 않는 기본 스타일) → `css/common/krds-custom.css` → 사이트 `krds-theme.css` → 사이트 추가 스타일
+메인 비주얼 영상은 `img/kr/main/main_hero_loop.mp4`에 있습니다. 미사용 관리자용 HTML·템플릿·CSS·JS와 최상위 `video/` 디렉토리는 제거했습니다.
 
 ## 로컬 실행
 
-저장소 루트에서 HTTP 서버를 실행합니다. `file://`로 직접 열면 공통 템플릿을 불러올 수 없습니다.
+화면을 확인할 때는 Python 3으로 저장소 루트에서 HTTP 서버를 실행합니다.
 
 ```bash
 python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-- 메인: http://127.0.0.1:8000/html/kr/main.html
-- 스타일가이드: http://127.0.0.1:8000/html/styleguide/styleguide.html
-- 조사 변천사 데이터 확인: http://127.0.0.1:8000/html/kr/stat/survey_history_list.html?check=1
+| 화면 | 로컬 주소 |
+|---|---|
+| 메인 | [메인 화면](http://127.0.0.1:8000/html/kr/main.html) |
+| 특수교육 현황 | [통계·그래프 화면](http://127.0.0.1:8000/html/kr/stat/edu_status.html) |
+| 조사 변천사 데이터 확인 | [엑셀 검증 화면](http://127.0.0.1:8000/html/kr/stat/survey_history_list.html?check=1) |
+| 스타일가이드 | [컴포넌트 가이드](http://127.0.0.1:8000/html/styleguide/styleguide.html) |
 
-## 초기화 순서
+공통 템플릿과 데이터 파일을 HTTP 요청으로 읽으므로 `file://`로 직접 열지 않습니다. 별도의 npm 개발 서버·빌드 명령은 없습니다.
 
-사용자 페이지는 `js/kr/include.js`로 템플릿을 먼저 삽입합니다. 조사 변천사는 그 다음 엑셀 데이터와 화면을 구성하고, 이후 KRDS UI를 초기화합니다. 그래프 페이지는 ECharts 다음에 `js/common/cm-chart.js`를 불러옵니다. 화면 표시 설정인 `js/common/krds-display.js`는 기존처럼 head에서 실행합니다.
+## 변경 후 검사
 
-`include.js`는 자신의 주소를 기준으로 프로젝트 루트를 계산하므로 서버 하위 경로에서도 사용할 수 있습니다. `{{root}}`는 프로젝트 루트, `{{html}}`은 `html/kr/`로 치환됩니다.
-
-## 검사·생성
-
-Python 3과 Node.js가 있는 환경에서 아래 명령으로 경로·생성 구간·자체 Python/JavaScript 문법을 한 번에 검사합니다. 프로젝트 파일을 변경하지 않으며 오류가 있으면 종료 코드 1을 반환합니다.
+Python 3과 Node.js가 있는 환경에서 다음 명령을 실행합니다.
 
 ```bash
 python3 _tools/check_project.py
 ```
 
-각 검사는 따로 실행할 수도 있습니다.
+프로젝트 파일을 수정하지 않고 로컬 파일 참조, HTML·SVG 생성 구간의 일치, 자체 Python·JavaScript 문법을 검사합니다. 실패하면 종료 코드 1을 반환합니다.
 
-```bash
-python3 _tools/check_paths.py
-python3 _tools/build_edu_status.py --check
-python3 _tools/build_main_stat_svg.py --check
-```
+생성 구간을 갱신해야 할 때 사용하는 명령은 [개발·유지보수 문서](docs/maintenance.md)에 정리했습니다.
 
-생성 구간의 갱신이 필요할 때 아래 명령을 실행합니다.
+## 현재 구현 범위
 
-```bash
-python3 _tools/build_edu_status.py
-python3 _tools/build_main_stat_svg.py
-```
+화면은 정적 HTML, 페이지 내 통계표·JSON, 조사 변천사 XLSX를 사용합니다. 실제 검색·AI 답변·교차분석 처리·만족도 저장 등은 운영 연동이 필요한 부분이 있습니다. 데이터분석 메뉴는 코드의 `hidden: true` 설정에 따라 숨겨져 있습니다.
 
-경로 검사와 `--check`는 파일을 수정하지 않습니다. 옵션 없는 생성 도구 두 개는 각각 `html/kr/stat/edu_status.html`, `html/kr/main.html`의 지정된 구간을 다시 씁니다. 조사 변천사는 `data/kr/survey_history/survey_history.xlsx`를 브라우저에서 직접 읽습니다.
-
-통합 검사는 로컬 참조와 생성 구간의 일치, 스크립트 문법을 확인합니다. 통계 원자료의 정확성, 생성 대상 밖의 수동 작성 수치, 메인 SVG의 `aria-label`, 브라우저 상호작용은 별도로 확인해야 합니다. 외부 라이브러리와 과거 백업의 JavaScript 문법은 검사하지 않습니다.
-
-## 디렉토리 이전
-
-파일 이동표와 URL 변경 사항은 `docs/directory-migration.md`를 참고합니다. 기존 사용자 화면 URL의 `/kr/html/`은 `/html/kr/`로 변경되었습니다. 기존 URL을 운영 중이었다면 웹 서버에서 별도의 리다이렉트 또는 경로 매핑을 적용해야 합니다. 이 저장소에서는 운영 서버 설정을 변경하지 않습니다.
-
-메인 비주얼 영상은 `img/kr/main/main_hero_loop.mp4`에 둡니다. 사용하지 않는 관리자용 HTML·템플릿·CSS·JS는 제거했습니다.
+운영 서버·DB·인증·배포 설정은 이 저장소에 포함되어 있지 않습니다. 이전 URL을 사용 중인 서비스가 있다면 배포 서버에서 별도로 경로 매핑 또는 리다이렉트를 적용해야 합니다.
