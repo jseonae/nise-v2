@@ -6,17 +6,18 @@
     python3 _tools/build_main_stat_svg.py
 
 - Figma(컨텐츠 > section2-1 tab1 의 그래프 4개)에서 내보낸 SVG 를 부품 단위로 정리한 것입니다.
-- kr/html/main.html 의 <!-- stat-svg:N --> ~ <!-- /stat-svg:N --> 사이를 다시 채웁니다.
-- 움직이는 부품에는 class="m m-종류" 와 시작 시각(--d) · 길이(--t)를 적습니다. 움직임은 kr/css/main.css 3-2 가 맡습니다.
+- html/kr/main.html 의 <!-- stat-svg:N --> ~ <!-- /stat-svg:N --> 사이를 다시 채웁니다.
+- 움직이는 부품에는 class="m m-종류" 와 시작 시각(--d) · 길이(--t)를 적습니다. 움직임은 css/kr/main.css 3-2 가 맡습니다.
     m-growy 아래에서 위로 자람 / m-growx 왼쪽에서 오른쪽으로 자람 / m-pop 톡 튀어나옴 / m-pop-b 말풍선(아래 기준)
     m-fade 나타남 / m-fadeup 살짝 올라오며 나타남 / m-wipe-up · m-wipe-right 그려지듯 드러남 / m-sweep 고리가 돌며 채워짐
 - 수치를 바꿀 때는 아래 값(글자 · data-count)과 main.html 의 aria-label 을 함께 고친 뒤 다시 실행합니다.
 """
+import argparse
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGE = ROOT / "kr" / "html" / "main.html"
+PAGE = ROOT / "html" / "kr" / "main.html"
 
 F = 'font-size="%s" font-weight="%s"'
 B15, B13, R13, B17, B24 = F % (15, 700), F % (13, 700), F % (13, 400), F % (17, 700), F % (24, 700)
@@ -187,8 +188,7 @@ VIEW = {1: "0 0 290 200", 2: "0 0 290 200", 3: "0 0 290 200", 4: "0 0 291 200"}
 BUILD = {1: svg1, 2: svg2, 3: svg3, 4: svg4}
 
 
-def main():
-    page = PAGE.read_text(encoding="utf-8")
+def render(page):
     for n in (1, 2, 3, 4):
         pattern = re.compile(r'(<!-- stat-svg:%d -->\n)(.*?)(\n\s*<!-- /stat-svg:%d -->)' % (n, n), re.S)
         found = pattern.search(page)
@@ -202,9 +202,25 @@ def main():
         svg = '%s<svg class="cm-stat-svg" viewBox="%s" role="img" aria-label="%s" xmlns="http://www.w3.org/2000/svg" fill="none" focusable="false">\n%s\n%s</svg>' % (
             indent, VIEW[n], label.group(1), body, indent)
         page = page[:found.start(2)] + svg + page[found.end(2):]
+    return page
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="HTML을 변경하지 않고 SVG 생성 구간이 일치하는지 검사")
+    args = parser.parse_args()
+    original = PAGE.read_text(encoding="utf-8")
+    page = render(original)
+    if args.check:
+        if page != original:
+            print("갱신 필요 :", PAGE.relative_to(ROOT))
+            return 1
+        print("생성 구간 일치 :", PAGE.relative_to(ROOT))
+        return 0
     PAGE.write_text(page, encoding="utf-8")
-    print("완료 : kr/html/main.html 의 인포그래픽 SVG 4개를 다시 만들었습니다.")
+    print("완료 : html/kr/main.html 의 인포그래픽 SVG 4개를 다시 만들었습니다.")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())

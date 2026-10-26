@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ko" data-krds-mode="light">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <meta name="keywords" content="">
+  <meta name="description" content="">
+  <meta name="format-detection" content="telephone=no">
+  <title>조사 변천사 상세 | 통계정보 | 특수교육 실태조사 데이터 활용 플랫폼</title>
+
+  <!-- 파비콘 (KRDS 1.1.0) -->
+  <link rel="icon" type="image/svg+xml" href="../../../krds/resources/img/component/favicon/favicon.svg">
+  <link rel="icon" type="image/png" sizes="512x512" href="../../../krds/resources/img/component/favicon/favicon-512x512.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="../../../krds/resources/img/component/favicon/favicon-192x192.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../../../krds/resources/img/component/favicon/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="../../../krds/resources/img/component/favicon/favicon-192x192.png">
+
+  <!-- css : KRDS (원본, 수정 금지) -->
+  <link rel="stylesheet" href="../../../krds/resources/css/plugin/swiper-bundle.min.css">
+  <link rel="stylesheet" href="../../../krds/resources/css/component/output.css">
+  <!-- css : 커스텀 -->
+  <link rel="stylesheet" href="../../../css/common/krds-base.css"><!-- KRDS 기본 보정 -->
+  <link rel="stylesheet" href="../../../css/common/krds-custom.css">
+  <link rel="stylesheet" href="../../../css/kr/krds-theme.css">
+  <link rel="stylesheet" href="../../../css/kr/user-custom.css">
+
+  <!-- script : 글자·화면 표시 설정 (화면 깜빡임 방지를 위해 head에서 불러옴) -->
+  <script src="../../../js/common/krds-display.js"></script>
+</head>
+
+<body>
+  <!--
+    ==================================================================
+    조사 변천사 상세 (Figma: 컨텐츠 > s01통계정보_조사 변천사 view, node 10498:44180)
+    공통 영역은 tmpl/kr 에서 인클루드합니다 (js/kr/include.js). 이 파일에는 페이지 컨텐츠만 둡니다.
+      [01]~[03] 헤더             : tmpl/kr/header.html
+      페이지 상단(브레드크럼·제목) : tmpl/kr/page-top.html (제목·설명은 메뉴 데이터, data-title · data-desc 로 변경 가능)
+      [05] 푸터 · TOP 버튼        : tmpl/kr/footer.html
+      [06] 모달                   : tmpl/kr/modal.html
+    ==================================================================
+  -->
+
+  <!-- [S] #wrap -->
+  <div id="wrap">
+    <!-- [01]~[03] 본문 바로가기 · 공식 누리집 배너 · 헤더 -->
+    <div data-include="header"></div>
+
+    <!-- ============================================================
+         [04] 컨테이너 : #container
+         ============================================================ -->
+    <div id="container">
+      <!-- 페이지 상단 : 브레드크럼 · 공유/인쇄 · 페이지 제목 -->
+      <div data-include="page-top"></div>
+
+      <!-- [04-1] 컨텐츠 : .inner (Figma: 컨텐츠 > s01통계정보_조사 변천사 view, node 10498:44180)
+           주소 survey_history_view.html?id=번호 (번호 = 차수×100 + 순서, 예 603 = 제6차 3번째 조사대상자)
+           제목 · 문항 수 · 표 · 이전글/다음글은 데이터로 채웁니다. (js/kr/survey-history.js)
+             데이터 : data/kr/survey_history/survey_history.xlsx (서버의 이 엑셀 파일만 바꾸면 화면이 바뀜)
+           아래 마크업의 글자는 견본(제6차 특수학교 관리자)이며 스크립트가 바꿉니다. DB 없이 이 방식(엑셀 파일 교체)으로 운영합니다. -->
+      <div class="inner cm-contents cm-survey-view" data-survey-history="view">
+        <noscript><p class="cm-history-ready">이 화면은 스크립트를 켜야 조사 문항을 볼 수 있습니다.</p></noscript>
+        <!-- 개요 : 조사 대상자 · 전체 문항 수 -->
+        <section id="section_01" class="cm-survey-head">
+          <h1 class="tit">특수학교 관리자</h1>
+          <p class="count"><strong class="num">40</strong> 문항</p>
+        </section>
+
+        <!-- 조사 문항 : KRDS 표(table data) -->
+        <section id="section_02" class="cm-survey-question">
+          <div class="cm-survey-question-top">
+            <h2 class="tit">특수학교 관리자 조사 문항</h2>
+            <p class="desc">제6차(2023년) · 조사 대상자 8개·영역 50개·총 421문항</p>
+          </div>
+          <div class="krds-table-wrap cm-question-table">
+            <table class="tbl col data">
+              <caption>특수학교 관리자 조사 문항 표로 영역, 세부 조사 문항, 문항수로 구성되어 있습니다.</caption>
+              <colgroup>
+                <col style="width: 12.8rem;">
+                <col>
+                <col style="width: 8.4rem;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th scope="col">영역</th>
+                  <th scope="col">세부 조사 문항</th>
+                  <th scope="col">문항수</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- 행 견본 (주석은 있을 때만 p.cm-question-note)
+                <tr>
+                  <th scope="row">일반사항</th>
+                  <td>방과후학교 참여 현황, 방과후 프로그램 수 및 참여 현황<p class="cm-question-note">※ 주석</p></td>
+                  <td>5</td>
+                </tr>
+                -->
+              </tbody>
+            </table>
+          </div>
+          <p class="cm-table-note">( ) 안의 숫자는 분기 문항을 포함한 문항 수</p>
+        </section>
+
+        <!-- 이전글 · 다음글 · 목록 -->
+        <div class="page-btn-wrap both">
+          <div class="btn-wrap">
+            <a href="survey_history_view.html" class="krds-btn medium tertiary"><i class="svg-icon ico-angle left"></i> 이전글</a>
+            <a href="survey_history_view.html" class="krds-btn medium tertiary">다음글 <i class="svg-icon ico-angle right"></i></a>
+          </div>
+          <a href="survey_history_list.html" class="krds-btn medium tertiary">목록으로</a>
+        </div>
+
+        <!-- 만족도조사 : 모든 콘텐츠 맨 아래 공통 (tmpl/kr/research.html) -->
+        <div data-include="research"></div>
+
+        <!-- 콘텐츠 내 탐색 : KRDS in_page_navigation (화면 오른쪽 고정, 조사개요 화면과 같은 마크업) -->
+        <div class="krds-in-page-navigation-type">
+          <div class="krds-in-page-navigation-area">
+            <div class="in-page-navigation-header">
+              <p class="quick-caption">이 페이지의 구성</p>
+              <p class="quick-title">특수학교 관리자</p>
+            </div>
+            <nav class="in-page-navigation-list" aria-label="이 페이지의 구성">
+              <ul>
+                <li><a href="#section_01" class="active">개요</a></li>
+                <li><a href="#section_02">조사 문항</a></li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
+      <!-- //[04-1] 컨텐츠 -->
+    </div>
+    <!-- //[04] 컨테이너 -->
+
+    <!-- [05] 푸터 · TOP 버튼 -->
+    <div data-include="footer"></div>
+  </div>
+  <!-- [E] #wrap -->
+
+  <!-- [06] 모달 (#wrap 바깥) -->
+  <div data-include="modal"></div>
+
+  <!-- ============================================================
+       [07] 스크립트
+       ============================================================ -->
+  <script src="../../../js/kr/include.js"></script><!-- 공통 영역 인클루드 : KRDS 스크립트보다 먼저 -->
+  <script src="../../../js/common/cm-xlsx.js?v=20261007b"></script><!-- 엑셀 읽기. 주소 뒤 ?v= 는 스크립트를 고쳤을 때 브라우저가 옛 파일을 쓰지 않게 하는 표시(고칠 때마다 날짜를 바꿈) -->
+  <script src="../../../js/kr/survey-history.js?v=20261007b"></script><!-- 조사 변천사 : 엑셀(data/kr/survey_history/survey_history.xlsx)을 읽어 그리기. 인클루드 다음, KRDS 스크립트보다 먼저 -->
+  <script src="../../../krds/resources/js/plugin/swiper-bundle.min.js"></script>
+  <script src="../../../krds/resources/js/component/ui-script.js"></script>
+  <script src="../../../js/common/krds-custom.js"></script>
+  <script src="../../../js/common/krds-base.js"></script>
+  <script src="../../../js/kr/user-custom.js"></script>
+  <!-- //[07] 스크립트 -->
+</body>
+</html>

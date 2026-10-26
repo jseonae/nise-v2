@@ -5,8 +5,8 @@
 사용법 (저장소 루트에서)
     python3 _tools/build_edu_status.py
 
-- 값은 kr/data/edu_status/edu_status.json 에 있습니다. (원본 : 화면설계서 통합본 sub_0102 의 TD · TNOTE · NOGROWTH)
-- kr/html/stat/edu_status.html 의 아래 두 구간을 다시 채웁니다.
+- 값은 data/kr/edu_status/edu_status.json 에 있습니다. (원본 : 화면설계서 통합본 sub_0102 의 TD · TNOTE · NOGROWTH)
+- html/kr/stat/edu_status.html 의 아래 두 구간을 다시 채웁니다.
     <!-- es-data:student-level --> ~ <!-- /es-data:student-level -->   학생 수 탭의 급별 (배치 5가지)
     <!-- es-data:institution -->   ~ <!-- /es-data:institution -->     기관 수 탭 전체 (조회 도구 + 계 · 배치별 · 급별)
   학생 수 탭의 계 · 배치별 · 장애유형별은 Figma 화면을 그대로 옮긴 마크업이라 이 스크립트가 건드리지 않습니다. (값은 JSON 과 같음)
@@ -14,12 +14,13 @@
 - 안내 문구는 화면설계서의 noteOf() 규칙을 옮긴 것입니다.
 """
 import json
+import argparse
 import re
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-PAGE = ROOT / "kr" / "html" / "stat" / "edu_status.html"
-DATA = json.loads((ROOT / "kr" / "data" / "edu_status" / "edu_status.json").read_text(encoding="utf-8"))
+PAGE = ROOT / "html" / "kr" / "stat" / "edu_status.html"
+DATA = json.loads((ROOT / "data" / "kr" / "edu_status" / "edu_status.json").read_text(encoding="utf-8"))
 YEARS = DATA["years"]
 
 # 급별일 때 고르는 배치 : (select 값, 화면 이름, JSON cross 키)
@@ -55,7 +56,7 @@ def result(basis, place, chart_type, title, table_id, src_id, unit, label, measu
     height = ' data-chart-height="48rem"' if chart_type == "combo" else ""
     out = [
         '%s<div class="cm-es-result" data-basis="%s"%s hidden>' % (I, basis, place_attr),
-        "%s  <!-- 그래프 : 신규 컴포넌트 _common/html/code/ext_chart.html (스크립트 cm-chart.js), 값은 아래 통계표에서 읽음 -->" % I,
+        "%s  <!-- 그래프 : 신규 컴포넌트 html/common/code/ext_chart.html (스크립트 cm-chart.js), 값은 아래 통계표에서 읽음 -->" % I,
         '%s  <div class="cm-chart-box cm-es-chart">' % I,
     ]
     if desc:
@@ -67,7 +68,7 @@ def result(basis, place, chart_type, title, table_id, src_id, unit, label, measu
         "%s    </div>" % I,
         "%s  </div>" % I,
         '%s  <h3 class="cm-es-tit">통계표</h3>' % I,
-        "%s  <!-- 가로 스크롤 표 : 신규 컴포넌트 _common/html/code/ext_table_scroll.html (스크립트 krds-custom.js cmTableScroll) -->" % I,
+        "%s  <!-- 가로 스크롤 표 : 신규 컴포넌트 html/common/code/ext_table_scroll.html (스크립트 krds-custom.js cmTableScroll) -->" % I,
         '%s  <div class="cm-table-scroll">' % I,
         '%s    <div class="krds-table-wrap cm-stat-table cm-es-table" tabindex="0" role="group" aria-label="%s 표, 좌우로 스크롤">' % (I, label),
         '%s      <table class="tbl col data" id="%s" style="--cm-first-col: %s;">' % (I, table_id, first_col),
@@ -126,7 +127,7 @@ def student_level():
 
 def institution_tools():
     return """                <!-- 조회 도구 : 기관 수 기준을 바꾸면 아래 그래프·통계표가 바뀜 (기관 수는 원자료에 장애유형별 구분이 없어 계 · 배치별 · 급별만 있음)
-                     퍼블리싱에서는 확인용 스크립트(kr/js/user-custom.js cmEduBasis)가 상태(.cm-es-result)를 바꿔 보여줌, 개발 시 서버 조회로 바꿈 -->
+                     퍼블리싱에서는 확인용 스크립트(js/kr/user-custom.js cmEduBasis)가 상태(.cm-es-result)를 바꿔 보여줌, 개발 시 서버 조회로 바꿈 -->
                 <div class="cm-ts-tool" id="es2_tools">
                   <div class="cm-ts-tool-filter">
                     <div class="cm-ts-select">
@@ -215,13 +216,27 @@ def fill(page, key, html):
     return page
 
 
-def main():
-    page = PAGE.read_text(encoding="utf-8")
+def render(page):
     page = fill(page, "student-level", student_level())
-    page = fill(page, "institution", institution())
+    return fill(page, "institution", institution())
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true", help="HTML을 변경하지 않고 생성 구간이 원본 데이터와 일치하는지 검사")
+    args = parser.parse_args()
+    original = PAGE.read_text(encoding="utf-8")
+    page = render(original)
+    if args.check:
+        if page != original:
+            print("갱신 필요 :", PAGE.relative_to(ROOT))
+            return 1
+        print("생성 구간 일치 :", PAGE.relative_to(ROOT))
+        return 0
     PAGE.write_text(page, encoding="utf-8")
     print("다시 만들었습니다 :", PAGE.relative_to(ROOT))
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
