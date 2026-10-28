@@ -2,8 +2,10 @@
    조사 변천사 : 엑셀 파일을 읽어 목록 · 상세 그리기
    - 화면 : html/kr/stat/survey_history_list.html · survey_history_view.html?id=번호
    - 데이터 : data/kr/survey_history/survey_history.xlsx
-       [조사 변천사] 시트 : 한 줄 = 상세 화면 표의 한 줄(연도 · 묶음 · 조사대상자 · 영역 · 세부 조사 문항 · 문항수 · 주석)
-       [연도] 시트 : 연도(탭)별 설정. [작성 방법] 시트는 사람이 읽는 안내라 읽지 않습니다.
+       시트 하나 = 연도(탭) 하나. 시트 이름이 연도(숫자 4자리)인 시트만 읽고, [작성 방법] · [새 연도 양식] 같은 나머지 시트는 읽지 않습니다.
+       연도 시트 위쪽 '기본 정보' : A칸 항목 이름(차수 · 공개 여부 · 기준 · …) + B칸 값
+       연도 시트 아래쪽 '조사 문항' : 제목 줄(묶음 · 조사대상자 · 영역 · …) 아래 한 줄 = 상세 화면 표의 한 줄
+       A칸이 ■ 로 시작하는 줄은 사람이 보는 구역 제목이라 건너뜁니다.
        서버의 이 엑셀 파일만 바꾸면 화면이 바뀝니다. 따로 변환할 것이 없습니다. (적는 방법 : data/kr/survey_history/README.md)
        엑셀은 js/common/cm-xlsx.js (CmXlsx) 가 읽습니다. 이 파일보다 먼저 불러와야 합니다.
    - 문항 수 합계 · 영역 수 · 묶음의 종 수 · 요약 문구 · 이전글/다음글 · 상세 주소 번호(차수×100+순서)는 엑셀에 적지 않고 여기서 계산합니다.
@@ -30,12 +32,11 @@
      엑셀 → 화면용 데이터
        { index : { rounds : [차수 · 개요 · 카드] }, rounds : { 차수 : 상세(조사대상자별 표) } }
      ------------------------------------------------------------------ */
-  const MAIN = "조사 변천사"; // 평소에 고치는 시트 : 한 줄 = 상세 화면 표의 한 줄
-  const YEAR = "연도"; // 연도(탭)별 설정
-  const SHEETS = {
-    [MAIN]: ["연도", "묶음", "조사대상자", "영역", "세부 조사 문항", "문항수", "주석", "대상자 전체 문항수"],
-    [YEAR]: ["연도", "차수", "상태", "기준", "영역 이름", "묶음 단위", "문항 단위", "조사 부분", "안내", "출처"],
-  };
+  // 연도 시트의 '기본 정보' 항목 (A칸 이름 → 값). 이름이 바뀌면 여기와 엑셀 [작성 방법] 시트를 함께 고칩니다
+  const SETTING = ["차수", "공개 여부", "기준", "영역 이름", "묶음 단위", "문항 단위", "조사 부분", "안내", "출처"];
+  // 연도 시트의 '조사 문항' 표 제목 줄 (열 순서는 바뀌어도 됨)
+  const COLUMNS = ["묶음", "조사대상자", "영역", "세부 조사 문항", "문항수", "주석", "대상자 전체 문항수"];
+  const CHOICE = { "공개 여부": ["공개", "예정"], 기준: ["대상자", "부문"], "문항 단위": ["문항", "항목"] };
   // 엑셀 내용이 잘못된 경우의 오류 (어느 시트 몇 번째 줄인지 담음)
   class DataError extends Error {}
   const asInt = (value, sheet, row, name, required = true) => {
@@ -48,95 +49,106 @@
     if (!Number.isInteger(number)) throw new DataError(`[${sheet}] ${row}번째 줄 : '${name}' 칸은 소수점 없는 숫자여야 합니다. (지금 값 : ${value})`);
     return number;
   };
-  const build = (book) => {
-    Object.entries(SHEETS).forEach(([sheet, columns]) => {
-      if (!(sheet in book)) throw new DataError(`엑셀에 '${sheet}' 시트가 없습니다.`);
-      if (book[sheet].length) {
-        const missing = columns.filter((c) => !(c in book[sheet][0]));
-        if (missing.length) throw new DataError(`[${sheet}] 첫 줄(제목 줄)에 다음 열이 없습니다 : ${missing.join(", ")}`);
+  // 연도 시트 하나 → { 기본 정보, 조사대상자 목록 }
+  const readYear = (sheet) => {
+    const name = sheet.name.trim();
+    const year = Number(name);
+    const rows = sheet.rows.filter((r) => !r.cells[0].startsWith("■")); // 구역 제목 줄은 건너뜀
+    const headAt = rows.findIndex((r) => r.cells.includes("조사대상자") && r.cells.includes("영역"));
+    if (headAt < 0) throw new DataError(`[${name}] 조사 문항 표의 제목 줄(묶음 · 조사대상자 · 영역 …)을 찾지 못했습니다.`);
+    // 1) 기본 정보 : 제목 줄 위쪽. A칸이 비어 있는 줄은 바로 윗 항목에 이어서 적은 것 (조사 부분만 여러 줄)
+    const set = {};
+    let last = null;
+    rows.slice(0, headAt).forEach(({ row, cells }) => {
+      const label = cells[0];
+      const value = cells[1] || "";
+      if (label) {
+        if (!SETTING.includes(label)) throw new DataError(`[${name}] ${row}번째 줄 : '${label}' 은(는) 기본 정보 항목이 아닙니다. (항목 : ${SETTING.join(", ")})`);
+        if (label in set) throw new DataError(`[${name}] ${row}번째 줄 : '${label}' 이(가) 두 번 적혀 있습니다.`);
+        set[label] = [];
+        last = label;
+      } else if (last !== "조사 부분") {
+        if (!value) return;
+        throw new DataError(`[${name}] ${row}번째 줄 : A칸(항목 이름)이 비어 있습니다. 여러 줄로 이어 적을 수 있는 것은 '조사 부분' 뿐입니다.`);
       }
+      if (value) set[last].push(value);
+      set[`${last}_row`] = set[`${last}_row`] || row;
     });
-    // 1) 연도 시트 : 연도(탭)별 설정
-    const rounds = new Map(); // 차수 → 설정
-    const byYear = new Map(); // 연도 → 설정
-    book[YEAR].forEach((r) => {
-      const year = asInt(r["연도"], YEAR, r._row, "연도");
-      const n = asInt(r["차수"], YEAR, r._row, "차수");
-      if (byYear.has(year)) throw new DataError(`[${YEAR}] ${r._row}번째 줄 : 연도 ${year} 이(가) 두 번 적혀 있습니다.`);
-      if (rounds.has(n)) throw new DataError(`[${YEAR}] ${r._row}번째 줄 : 차수 ${n} 이(가) 두 번 적혀 있습니다.`);
-      const state = r["상태"] || "공개";
-      if (state !== "공개" && state !== "예정") throw new DataError(`[${YEAR}] ${r._row}번째 줄 : '상태' 칸은 공개 또는 예정이어야 합니다. (지금 값 : ${state})`);
-      const round = {
-        round: n,
-        year,
-        open: state === "공개",
-        axis: r["기준"] === "부문" ? "조사 부문" : "조사 대상자",
-        areaWord: r["영역 이름"] || "영역",
-        groupUnit: r["묶음 단위"] || "종",
-        unit: r["문항 단위"] || "문항",
-        parts: r["조사 부분"].split(/\r?\n/).map((line) => line.trim()).filter(Boolean),
-        note: r["안내"],
-        source: r["출처"],
-        row: r._row,
-        targets: [],
-      };
-      rounds.set(n, round);
-      byYear.set(year, round);
+    const one = (label, fallback = "") => (set[label] || []).join(" ") || fallback;
+    const rowOf = (label) => set[`${label}_row`] || rows[0].row;
+    Object.entries(CHOICE).forEach(([label, options]) => {
+      const value = one(label);
+      if (value && !options.includes(value)) throw new DataError(`[${name}] ${rowOf(label)}번째 줄 : '${label}' 칸은 ${options.join(" 또는 ")} 이어야 합니다. (지금 값 : ${value})`);
     });
-    // 2) 조사 변천사 시트 : 위에서 아래로 읽으며 연도 → 묶음 → 조사대상자 → 영역 으로 쌓음
-    //    연도 · 묶음 · 조사대상자 칸이 비어 있으면 바로 윗줄과 같은 것으로 봄 (바뀌는 첫 줄에만 적으면 됨)
-    let round = null;
+    if (!("차수" in set)) throw new DataError(`[${name}] 기본 정보에 '차수' 줄이 없습니다.`);
+    const round = {
+      round: asInt(one("차수"), name, rowOf("차수"), "차수"),
+      year,
+      open: one("공개 여부", "공개") === "공개",
+      axis: one("기준") === "부문" ? "조사 부문" : "조사 대상자",
+      areaWord: one("영역 이름", "영역"),
+      groupUnit: one("묶음 단위", "종"),
+      unit: one("문항 단위", "문항"),
+      parts: set["조사 부분"] || [],
+      note: one("안내"),
+      source: one("출처"),
+      sheet: name,
+      row: rowOf("차수"),
+      targets: [],
+    };
+    // 2) 조사 문항 : 제목 줄 아래. 위에서 아래로 읽으며 묶음 → 조사대상자 → 영역 으로 쌓음
+    //    묶음 · 조사대상자 칸이 비어 있으면 바로 윗줄과 같은 것으로 봄 (바뀌는 첫 줄에만 적거나 셀을 병합해도 됨)
+    const head = rows[headAt].cells;
+    const missing = COLUMNS.filter((c) => !head.includes(c));
+    if (missing.length) throw new DataError(`[${name}] ${rows[headAt].row}번째 줄 : 조사 문항 표의 제목 줄에 다음 칸이 없습니다 : ${missing.join(", ")}`);
+    const col = Object.fromEntries(COLUMNS.map((c) => [c, head.indexOf(c)]));
     let group = "";
     let target = null;
-    const seen = new Set(); // 이미 지나간 연도 (같은 연도가 떨어져서 다시 나오는 실수를 잡음)
-    book[MAIN].forEach((q) => {
-      if (q["연도"] !== "") {
-        const year = asInt(q["연도"], MAIN, q._row, "연도");
-        if (!round || round.year !== year) {
-          if (!byYear.has(year)) throw new DataError(`[${MAIN}] ${q._row}번째 줄 : 연도 ${year} 이(가) '${YEAR}' 시트에 없습니다.`);
-          if (seen.has(year)) throw new DataError(`[${MAIN}] ${q._row}번째 줄 : 연도 ${year} 이(가) 떨어진 곳에 다시 나옵니다. 같은 연도는 한곳에 모아 적어 주세요.`);
-          seen.add(year);
-          round = byYear.get(year);
-          group = "";
-          target = null;
-        }
-      }
-      if (!round) throw new DataError(`[${MAIN}] ${q._row}번째 줄 : 첫 줄에는 '연도' 를 적어야 합니다.`);
+    rows.slice(headAt + 1).forEach(({ row, cells }) => {
+      const q = Object.fromEntries(COLUMNS.map((c) => [c, cells[col[c]] || ""]));
+      if (!COLUMNS.some((c) => q[c])) return; // 표 밖(오른쪽 칸)에만 적힌 메모 줄
       if (q["묶음"] !== "" && q["묶음"] !== group) {
         group = q["묶음"];
         target = null; // 묶음이 바뀌면 조사대상자도 새로 시작
       }
       if (q["조사대상자"] !== "" && (!target || target.label !== q["조사대상자"])) {
-        const order = round.targets.length + 1;
-        target = { id: round.round * 100 + order, group, label: q["조사대상자"], fixedTotal: null, row: q._row, areas: [] };
+        target = { id: round.round * 100 + round.targets.length + 1, group, label: q["조사대상자"], fixedTotal: null, row, areas: [] };
         round.targets.push(target);
       }
-      if (!target) throw new DataError(`[${MAIN}] ${q._row}번째 줄 : '조사대상자' 칸이 비어 있습니다. 연도나 묶음이 바뀌는 첫 줄에는 조사대상자를 적어 주세요.`);
-      if (!q["영역"]) throw new DataError(`[${MAIN}] ${q._row}번째 줄 : '영역' 칸이 비어 있습니다. (영역 이름이 없으면 - 를 적습니다)`);
-      const fixed = asInt(q["대상자 전체 문항수"], MAIN, q._row, "대상자 전체 문항수", false);
+      if (!target) throw new DataError(`[${name}] ${row}번째 줄 : '조사대상자' 칸이 비어 있습니다. 표의 첫 줄과 묶음이 바뀌는 줄에는 조사대상자를 적어 주세요.`);
+      if (!q["영역"]) throw new DataError(`[${name}] ${row}번째 줄 : '영역' 칸이 비어 있습니다. (영역 이름이 없으면 - 를 적습니다)`);
+      const fixed = asInt(q["대상자 전체 문항수"], name, row, "대상자 전체 문항수", false);
       if (fixed !== null) {
         if (target.fixedTotal !== null && target.fixedTotal !== fixed) {
-          throw new DataError(`[${MAIN}] ${q._row}번째 줄 : '${target.label}' 의 대상자 전체 문항수가 ${target.fixedTotal} 과(와) ${fixed} 두 가지로 적혀 있습니다. 첫 줄에 한 번만 적어 주세요.`);
+          throw new DataError(`[${name}] ${row}번째 줄 : '${target.label}' 의 대상자 전체 문항수가 ${target.fixedTotal} 과(와) ${fixed} 두 가지로 적혀 있습니다. 첫 줄에 한 번만 적어 주세요.`);
         }
         target.fixedTotal = fixed;
       }
-      target.areas.push({
-        name: q["영역"],
-        detail: q["세부 조사 문항"],
-        count: asInt(q["문항수"], MAIN, q._row, "문항수", false),
-        note: q["주석"],
-      });
+      target.areas.push({ name: q["영역"], detail: q["세부 조사 문항"], count: asInt(q["문항수"], name, row, "문항수", false), note: q["주석"] });
+    });
+    return round;
+  };
+  const build = (book) => {
+    // 시트 이름이 연도(숫자 4자리)인 시트만 읽음
+    const years = book.filter((sheet) => /^\d{4}$/.test(sheet.name.trim()));
+    if (!years.length) throw new DataError("연도 시트가 없습니다. 시트 이름을 연도(예 2023)로 적어 주세요.");
+    const rounds = new Map(); // 차수 → 연도
+    years.forEach((sheet) => {
+      const rd = readYear(sheet);
+      if (rounds.has(rd.round)) throw new DataError(`[${rd.sheet}] ${rd.row}번째 줄 : 차수 ${rd.round} 이(가) [${rounds.get(rd.round).sheet}] 시트와 겹칩니다.`);
+      if ([...rounds.values()].some((r) => r.year === rd.year)) throw new DataError(`[${rd.sheet}] 같은 연도 시트가 두 개 있습니다.`);
+      rounds.set(rd.round, rd);
     });
     // 4) 계산 : 합계 · 영역 수 · 묶음 · 요약 문구 · 이전글/다음글
     const data = { index: { rounds: [] }, rounds: {} };
     [...rounds.keys()].sort((a, b) => a - b).forEach((n) => {
       const rd = rounds.get(n);
-      if (rd.open && !rd.targets.length) throw new DataError(`[${YEAR}] ${rd.row}번째 줄 : ${rd.year}년은 공개인데 '${MAIN}' 시트에 적힌 줄이 없습니다. 아직 준비 중이면 상태를 예정으로 적어 주세요.`);
+      if (rd.open && !rd.targets.length) throw new DataError(`[${rd.sheet}] ${rd.year}년은 공개인데 조사 문항 표가 비어 있습니다. 아직 준비 중이면 공개 여부를 예정으로 적어 주세요.`);
       rd.targets.forEach((t) => {
         // 문항 수 : 영역별 문항수를 더함. 영역별 문항수를 적지 않은 대상자는 '대상자 전체 문항수' 를 씀
         const counted = t.areas.reduce((sum, a) => sum + (a.count || 0), 0);
         if (t.fixedTotal !== null && counted && t.fixedTotal !== counted) {
-          throw new DataError(`[${MAIN}] ${t.row}번째 줄 : '${t.label}' 의 대상자 전체 문항수 ${t.fixedTotal} 이(가) 영역별 문항수의 합계 ${counted} 과(와) 다릅니다. 한쪽을 고치거나 대상자 전체 문항수 칸을 비워 주세요.`);
+          throw new DataError(`[${rd.sheet}] ${t.row}번째 줄 : '${t.label}' 의 대상자 전체 문항수 ${t.fixedTotal} 이(가) 영역별 문항수의 합계 ${counted} 과(와) 다릅니다. 한쪽을 고치거나 대상자 전체 문항수 칸을 비워 주세요.`);
         }
         t.total = t.fixedTotal !== null ? t.fixedTotal : counted;
       });
@@ -188,7 +200,7 @@
   let failure = "";
   const load = (retry = 1) => {
     try {
-      return build(CmXlsx.read(source));
+      return build(CmXlsx.sheets(source));
     } catch (error) {
       if (!(error instanceof DataError) && retry > 0) return load(retry - 1); // 연결이 잠깐 끊긴 경우를 위해 한 번 더 시도
       failure = error instanceof DataError ? `엑셀 내용을 확인해 주세요. ${error.message}` : `엑셀 파일을 읽지 못했습니다. ${error.message}`;

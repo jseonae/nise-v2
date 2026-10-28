@@ -1,9 +1,12 @@
 /* ==========================================================================
    CmXlsx : 엑셀(.xlsx) 파일을 브라우저에서 바로 읽기 (외부 라이브러리 없음)
    - 쓰는 곳 : 조사 변천사 (js/kr/survey-history.js). 운영자가 서버의 엑셀 파일만 바꾸면 화면이 바뀌게 하려는 용도
+   - CmXlsx.sheets(주소) → [ { name : 시트 이름, rows : [ { row : 엑셀 줄 번호, cells : [ A칸 값, B칸 값, ... ] }, ... ] }, ... ]
+       · 시트 순서 그대로, 줄을 있는 그대로 돌려줍니다. 시트 안에 제목 · 안내 줄이 섞인 자유 양식을 읽을 때 씁니다.
    - CmXlsx.read(주소) → { 시트 이름 : [ { 열 이름 : 값, _row : 엑셀 줄 번호 }, ... ] }
-       · 시트의 첫 줄을 열 이름으로 보고, 둘째 줄부터 한 줄을 한 건으로 돌려줍니다. 값은 모두 글자이고 앞뒤 공백은 뺍니다.
-       · 값이 하나도 없는 줄은 뺍니다. 병합 셀 · 서식 · 메모 · 수식(계산된 값만 읽음)은 다루지 않습니다.
+       · 시트의 첫 줄을 열 이름으로 보고, 둘째 줄부터 한 줄을 한 건으로 돌려줍니다.
+   - 두 방식 모두 값은 글자이고 앞뒤 공백은 뺍니다. 값이 하나도 없는 줄은 뺍니다.
+     병합 셀은 왼쪽 위 칸에만 값이 있고 나머지는 빈 칸으로 읽습니다. 서식 · 메모 · 수식(계산된 값만 읽음)은 다루지 않습니다.
    - 엑셀 파일은 압축(zip)된 XML 묶음이라 ① 파일 받기 ② 압축 풀기 ③ XML 읽기 순서로 처리합니다.
    - 화면을 그리기 전에 값이 필요해 동기 방식으로 받습니다. (js/kr/include.js 와 같은 방식)
      받을 때마다 서버에 바뀌었는지 확인하므로(no-cache) 엑셀을 교체하면 바로 반영됩니다.
@@ -183,7 +186,7 @@ const CmXlsx = (() => {
     return n - 1;
   };
 
-  const read = (url) => {
+  const sheets = (url) => {
     const zip = unzip(fetchBytes(url));
     // 공유 문자열 : 일반 글자(t) · 서식이 섞인 글자(r/t)를 이어 붙임, 윗주(rPh)는 뺌
     const shared = zip.has("xl/sharedStrings.xml")
@@ -192,13 +195,13 @@ const CmXlsx = (() => {
         )
       : [];
     const targets = new Map(all(xml(zip.text("xl/_rels/workbook.xml.rels")), "Relationship").map((r) => [r.getAttribute("Id"), r.getAttribute("Target")]));
-    const book = {};
-    all(xml(zip.text("xl/workbook.xml")), "sheet").forEach((sheet) => {
+    return all(xml(zip.text("xl/workbook.xml")), "sheet").map((sheet) => {
       const relId = sheet.getAttribute("r:id") || sheet.getAttributeNS("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id");
       const target = targets.get(relId) || "";
       const path = target.startsWith("/") ? target.slice(1) : `xl/${target}`;
-      const rows = all(xml(zip.text(path)), "row").map((row) => {
-        const cells = {};
+      const rows = [];
+      all(xml(zip.text(path)), "row").forEach((row) => {
+        const cells = [];
         kids(row, "c").forEach((c) => {
           const kind = c.getAttribute("t");
           const v = kids(c, "v")[0];
@@ -207,26 +210,34 @@ const CmXlsx = (() => {
           else if (kind === "inlineStr") value = all(c, "t").map((t) => t.textContent).join("");
           cells[colIndex(c.getAttribute("r"))] = (value || "").trim();
         });
-        return { number: Number(row.getAttribute("r")), cells };
+        for (let i = 0; i < cells.length; i++) if (cells[i] === undefined) cells[i] = "";
+        if (cells.some((value) => value)) rows.push({ row: Number(row.getAttribute("r")), cells });
       });
+      return { name: sheet.getAttribute("name"), rows };
+    });
+  };
+
+  const read = (url) => {
+    const book = {};
+    sheets(url).forEach(({ name, rows }) => {
       const records = [];
       if (rows.length) {
-        const names = Object.entries(rows[0].cells).filter(([, name]) => name);
-        rows.slice(1).forEach(({ number, cells }) => {
+        const names = rows[0].cells.map((title, i) => [i, title]).filter(([, title]) => title);
+        rows.slice(1).forEach(({ row, cells }) => {
           const record = {};
-          names.forEach(([i, name]) => {
-            record[name] = cells[i] || "";
+          names.forEach(([i, title]) => {
+            record[title] = cells[i] || "";
           });
           if (Object.values(record).some((value) => value)) {
-            record._row = number;
+            record._row = row;
             records.push(record);
           }
         });
       }
-      book[sheet.getAttribute("name")] = records;
+      book[name] = records;
     });
     return book;
   };
 
-  return { read };
+  return { sheets, read };
 })();
