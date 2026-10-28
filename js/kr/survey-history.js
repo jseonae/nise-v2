@@ -97,7 +97,8 @@
       targets: [],
     };
     // 2) 조사 문항 : 제목 줄 아래. 위에서 아래로 읽으며 묶음 → 조사대상자 → 영역 으로 쌓음
-    //    묶음 · 조사대상자 칸이 비어 있으면 바로 윗줄과 같은 것으로 봄 (바뀌는 첫 줄에만 적거나 셀을 병합해도 됨)
+    //    묶음 · 조사대상자는 모든 줄에 적는 것이 원칙(엑셀 필터용). 위아래로 이어진 같은 조사대상자는 한 대상자로 묶음
+    //    칸이 비어 있으면 바로 윗줄과 같은 것으로 봄 (예전 방식 · 병합 셀도 읽히도록)
     const head = rows[headAt].cells;
     const missing = COLUMNS.filter((c) => !head.includes(c));
     if (missing.length) throw new DataError(`[${name}] ${rows[headAt].row}번째 줄 : 조사 문항 표의 제목 줄에 다음 칸이 없습니다 : ${missing.join(", ")}`);
@@ -115,7 +116,7 @@
         target = { id: round.round * 100 + round.targets.length + 1, group, label: q["조사대상자"], fixedTotal: null, row, areas: [] };
         round.targets.push(target);
       }
-      if (!target) throw new DataError(`[${name}] ${row}번째 줄 : '조사대상자' 칸이 비어 있습니다. 표의 첫 줄과 묶음이 바뀌는 줄에는 조사대상자를 적어 주세요.`);
+      if (!target) throw new DataError(`[${name}] ${row}번째 줄 : '조사대상자' 칸이 비어 있습니다. 모든 줄에 조사대상자를 적어 주세요.`);
       if (!q["영역"]) throw new DataError(`[${name}] ${row}번째 줄 : '영역' 칸이 비어 있습니다. (영역 이름이 없으면 - 를 적습니다)`);
       const fixed = asInt(q["대상자 전체 문항수"], name, row, "대상자 전체 문항수", false);
       if (fixed !== null) {
