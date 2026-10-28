@@ -12,6 +12,7 @@
 | [개발·유지보수](docs/maintenance.md) | 주요 파일, 로딩 순서, 데이터 수정, 검사·생성 도구 |
 | [디렉토리 변경 이력](docs/directory-migration.md) | 이전·현재 경로, 영상 이동, 관리자 파일 제거 |
 | [조사 변천사 데이터](data/kr/survey_history/README.md) | XLSX 작성 방법과 화면 확인 절차 |
+| [조사 변천사 화면 작동 안내](docs/survey-history.md) | 비개발자용 작동 원리 설명, 자주 묻는 질문, 변경 이력 |
 | [KRDS 반입 기록](krds/KRDS_VERSION.md) | 버전·출처, 보존 범위, 프로젝트 확장 위치 |
 
 ## 디렉토리 구조
