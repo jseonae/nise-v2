@@ -1,8 +1,9 @@
 /* ==========================================================================
    CmXlsx : 엑셀(.xlsx) 파일을 브라우저에서 바로 읽기 (외부 라이브러리 없음)
    - 쓰는 곳 : 조사 변천사 (js/kr/survey-history.js). 운영자가 서버의 엑셀 파일만 바꾸면 화면이 바뀌게 하려는 용도
-   - CmXlsx.sheets(주소) → [ { name : 시트 이름, rows : [ { row : 엑셀 줄 번호, cells : [ A칸 값, B칸 값, ... ] }, ... ] }, ... ]
+   - CmXlsx.sheets(주소) → [ { name : 시트 이름, hidden : 숨긴 시트인지, rows : [ { row : 엑셀 줄 번호, cells : [ A칸 값, … ], kinds : [ A칸 종류, … ] }, ... ] }, ... ]
        · 시트 순서 그대로, 줄을 있는 그대로 돌려줍니다. 시트 안에 제목 · 안내 줄이 섞인 자유 양식을 읽을 때 씁니다.
+       · kinds : 칸에 저장된 값의 종류. "n" 숫자(엑셀이 날짜로 바꾼 값도 숫자로 저장됨) · "s" 글자 · "b" 참/거짓 · "e" 오류값(#REF! 등) · "" 빈칸
    - CmXlsx.read(주소) → { 시트 이름 : [ { 열 이름 : 값, _row : 엑셀 줄 번호 }, ... ] }
        · 시트의 첫 줄을 열 이름으로 보고, 둘째 줄부터 한 줄을 한 건으로 돌려줍니다.
    - 두 방식 모두 값은 글자이고 앞뒤 공백은 뺍니다. 값이 하나도 없는 줄은 뺍니다.
@@ -202,18 +203,25 @@ const CmXlsx = (() => {
       const rows = [];
       all(xml(zip.text(path)), "row").forEach((row) => {
         const cells = [];
+        const kinds = [];
         kids(row, "c").forEach((c) => {
-          const kind = c.getAttribute("t");
+          const kind = c.getAttribute("t") || "n";
           const v = kids(c, "v")[0];
           let value = v ? v.textContent : "";
           if (kind === "s" && v) value = shared[Number(v.textContent)];
           else if (kind === "inlineStr") value = all(c, "t").map((t) => t.textContent).join("");
-          cells[colIndex(c.getAttribute("r"))] = (value || "").trim();
+          const i = colIndex(c.getAttribute("r"));
+          cells[i] = (value || "").trim();
+          kinds[i] = cells[i] ? ({ n: "n", b: "b", e: "e" })[kind] || "s" : "";
         });
-        for (let i = 0; i < cells.length; i++) if (cells[i] === undefined) cells[i] = "";
-        if (cells.some((value) => value)) rows.push({ row: Number(row.getAttribute("r")), cells });
+        for (let i = 0; i < cells.length; i++) {
+          if (cells[i] === undefined) cells[i] = "";
+          if (kinds[i] === undefined) kinds[i] = "";
+        }
+        if (cells.some((value) => value)) rows.push({ row: Number(row.getAttribute("r")), cells, kinds });
       });
-      return { name: sheet.getAttribute("name"), rows };
+      const state = sheet.getAttribute("state");
+      return { name: sheet.getAttribute("name"), hidden: state === "hidden" || state === "veryHidden", rows };
     });
   };
 
