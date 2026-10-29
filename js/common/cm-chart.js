@@ -1,9 +1,11 @@
 /* ==========================================================================
    그래프 (신규 컴포넌트, KRDS 없음) : html/common/code/ext_chart.html
-   - 기준 : nise2026/nise_graph_13types_v1.0.html (그래프 13종 검토본 v63)
+   - 기준 : nise2026/nise_graph_13types_v1.1.html (그래프 13종 v1.1, 차이 정리 : nise2026/nise_graph_v1.0_v1.1_comparison.md)
        색·패턴 세트(TS_VISUAL_SETS), 세트 사용 순서, 패턴 타일(tsPatternTilePath·tsBarDecal),
        꺾은선 모양(tsApplyLinePatterns), HTML 범례(tsRenderHtmlLegend), 키보드 탐색(chart-keyboard-navigation-v22),
-       다운로드(dl-legend-v63), 다크 팔레트(graph-dark-palette-v63), ⑧ 콤보·스몰 멀티플(sm-trend-v63) 규칙을 옮겼습니다.
+       다운로드(dl-legend-v63), ⑧ 콤보·스몰 멀티플(sm-trend-v63) 규칙을 옮겼습니다.
+       v1.1 규칙 : 패턴 불투명도 80%(02·03·04·05·07·09) · 공통 순서 06→08→05→09→04→10→03→01→07→02(연도 계열도 같음) ·
+       막대 계열 1개는 06 무패턴 · 다크 모드도 라이트와 같은 팔레트(다크 꺾은선만 01부터) · 꺾은선 레이블 상자(line-data-label-style)
        검토본의 주소(#) 분기, echarts.init 덮어쓰기, 렌더 후 DOM 재배치는 가져오지 않았습니다.
    - 라이브러리 : ECharts 5.5.0 (js/common/lib/echarts.min.js), SVG 렌더러
    - 값은 페이지의 통계표(data-chart-table)나 JSON(data-chart-data)에서 읽습니다. 개발 시 서버 데이터로 바꿉니다.
@@ -14,36 +16,31 @@
   if (!window.echarts) return;
 
   /* ------------------------------------------------------------------
-     1. 색·패턴 세트 (13types TS_VISUAL_SETS 그대로 : KRDS Primary 5→90, 색과 패턴이 한 세트)
+     1. 색·패턴 세트 (13types v1.1 TS_VISUAL_SETS 그대로 : KRDS Primary 5→90, 색과 패턴이 한 세트)
+        alpha : 패턴 기본 불투명도(%), transparency : 추가 투명도(%). 실제 불투명도 = alpha × (1 - transparency/100)
      ------------------------------------------------------------------ */
   const SETS = [
-    { bg: "#ECF2FE", pattern: "slash", patternColor: "#4C87F6", text: "#0B50D0", gap: 4, thickness: 1.15, angle: 45, alpha: 100, size: 100 },
-    { bg: "#D8E5FD", pattern: "horizontal", patternColor: "#256EF4", text: "#0B50D0", gap: 6, thickness: 0.55, angle: 0, alpha: 44, size: 155 },
-    { bg: "#B1CEFB", pattern: "dot", patternColor: "#0B50D0", text: "#083891", gap: 10, thickness: 0.9, angle: 0, alpha: 44, size: 100 },
-    { bg: "#86AFF9", pattern: "grid", patternColor: "#0B50D0", text: "#083891", gap: 8, thickness: 0.7, angle: 0, alpha: 36, size: 100 },
-    { bg: "#4C87F6", pattern: "vertical", patternColor: "#083891", text: "#03163A", gap: 6, thickness: 2.25, angle: 0, alpha: 39, size: 135 },
-    { bg: "#256EF4", pattern: "none", patternColor: "#FFFFFF", text: "#FFFFFF", gap: 8, thickness: 1, angle: 0, alpha: 100, size: 100 },
-    { bg: "#0B50D0", pattern: "bigdot", patternColor: "#86AFF9", text: "#FFFFFF", gap: 12, thickness: 1.8, angle: 0, alpha: 33, size: 100 },
-    { bg: "#083891", pattern: "shortdiag", patternColor: "#4C87F6", text: "#FFFFFF", gap: 9, thickness: 1, angle: 0, alpha: 100, size: 100 },
-    { bg: "#052561", pattern: "densediag", patternColor: "#256EF4", text: "#FFFFFF", gap: 8, thickness: 0.5, angle: 0, alpha: 59, size: 200 },
-    { bg: "#03163A", pattern: "plus", patternColor: "#256EF4", text: "#FFFFFF", gap: 29, thickness: 1.25, angle: 0, alpha: 100, size: 50 },
+    { bg: "#ECF2FE", pattern: "slash", patternColor: "#4C87F6", text: "#0B50D0", gap: 4, thickness: 1.15, angle: 45, alpha: 100, transparency: 0, size: 100 },
+    { bg: "#D8E5FD", pattern: "horizontal", patternColor: "#256EF4", text: "#0B50D0", gap: 6, thickness: 0.55, angle: 0, alpha: 80, transparency: 0, size: 155 },
+    { bg: "#B1CEFB", pattern: "dot", patternColor: "#0B50D0", text: "#083891", gap: 10, thickness: 0.9, angle: 0, alpha: 80, transparency: 0, size: 100 },
+    { bg: "#86AFF9", pattern: "grid", patternColor: "#0B50D0", text: "#083891", gap: 8, thickness: 0.7, angle: 0, alpha: 80, transparency: 0, size: 100 },
+    { bg: "#4C87F6", pattern: "vertical", patternColor: "#083891", text: "#03163A", gap: 6, thickness: 2.25, angle: 0, alpha: 80, transparency: 0, size: 135 },
+    { bg: "#256EF4", pattern: "none", patternColor: "#FFFFFF", text: "#FFFFFF", gap: 8, thickness: 1, angle: 0, alpha: 100, transparency: 0, size: 100 },
+    { bg: "#0B50D0", pattern: "bigdot", patternColor: "#86AFF9", text: "#FFFFFF", gap: 12, thickness: 1.8, angle: 0, alpha: 80, transparency: 0, size: 100 },
+    { bg: "#083891", pattern: "shortdiag", patternColor: "#4C87F6", text: "#FFFFFF", gap: 9, thickness: 1, angle: 0, alpha: 100, transparency: 0, size: 100 },
+    { bg: "#052561", pattern: "densediag", patternColor: "#256EF4", text: "#FFFFFF", gap: 8, thickness: 0.5, angle: 0, alpha: 80, transparency: 0, size: 200 },
+    { bg: "#03163A", pattern: "plus", patternColor: "#256EF4", text: "#FFFFFF", gap: 29, thickness: 1.25, angle: 0, alpha: 100, transparency: 0, size: 50 },
   ];
-  /* 다크(선명한 화면) : 밝기를 반전, 패턴은 진한 남색 (graph-dark-palette-v63) */
-  const DARK_BG = ["#256EF4", "#256EF4", "#4C87F6", "#4C87F6", "#86AFF9", "#86AFF9", "#B1CEFB", "#B1CEFB", "#D8E5FD", "#ECF2FE"];
-  const DARK_TEXT = ["#FFFFFF", "#FFFFFF", "#03163A", "#03163A", "#03163A", "#03163A", "#03163A", "#03163A", "#03163A", "#03163A"];
-  const DARK_PATTERN = "#052561";
-  const palette = (dark) =>
-    SETS.map((s, i) => {
-      if (!dark) return s;
-      const d = Object.assign({}, s, { bg: DARK_BG[i], text: DARK_TEXT[i] });
-      if (s.pattern !== "none") Object.assign(d, { patternColor: DARK_PATTERN, alpha: Math.max(40, Math.min(70, s.alpha)) });
-      return d;
-    });
-  /* 세트 사용 순서 : 일반은 기준 블루(세트 5)부터, 막대 2개는 [5,7], 연도 계열은 과거 연하게 → 최신 진하게 */
-  const ORDER_DEFAULT = [5, 7, 6, 4, 8, 3, 9, 2, 1, 0];
+  /* 다크(선명한 화면)도 그래프 색·패턴·불투명도·순서는 라이트와 같음 (v1.1). 화면 배경 · 축 · 글자 등 UI 색만 다크를 따름 */
+  const palette = () => SETS;
+  /* 세트 사용 순서 (v1.1) : 일반 · 연도 계열 모두 06→08→05→09→04→10→03→01→07→02, 막대 2개는 06 · 08
+     막대 계열이 1개이면 06(기본 파랑 · 무패턴) — barSeries 참고 */
+  const ORDER_DEFAULT = [5, 7, 4, 8, 3, 9, 2, 0, 6, 1];
   const ORDER_BINARY = [5, 7];
-  const ORDER_YEAR = { 1: [5], 2: [4, 6], 3: [4, 5, 6], 4: [3, 4, 6, 7] };
-  const ORDER_YEAR_MANY = [3, 4, 5, 6, 7];
+  const SINGLE_BAR = 5;
+  /* 꺾은선 색 : 라이트는 v1.0 배정을 그대로 유지, 다크는 계열 순서대로 01→02→…→10 (v1.1) */
+  const ORDER_LINE_LIGHT = [5, 7, 6, 4, 8, 3, 9, 2, 1, 0];
+  const ORDER_LINE_DARK = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   /* 꺾은선 : 선 모양 + 점 모양으로 구분 (tsApplyLinePatterns) */
   const LINE_STYLES = [
     { type: "solid", symbol: "circle" },
@@ -126,9 +123,11 @@
   /* ------------------------------------------------------------------
      3. 패턴 (13types tsPatternTilePath · tsBarDecal · 범례 견본)
      ------------------------------------------------------------------ */
+  const clamp = (v, fallback) => Math.max(0, Math.min(100, Number.isFinite(Number(v)) ? Number(v) : fallback));
+  const patternOpacity = (set) => (clamp(set.alpha, 100) / 100) * (1 - clamp(set.transparency, 0) / 100);
   const patternRGBA = (set) => {
     const c = set.patternColor.slice(1).match(/../g).map((h) => parseInt(h, 16));
-    return `rgba(${c.join(", ")}, ${set.alpha / 100})`;
+    return `rgba(${c.join(", ")}, ${patternOpacity(set)})`;
   };
   const tilePath = (set) => {
     const g = set.gap;
@@ -265,7 +264,7 @@
   const orderFor = (config, model, bars) => {
     if (config.palette) return config.palette;
     const names = model.series.map((s) => s.name);
-    if (names.length && names.every((n) => /^\d{4}년?$/.test(String(n)))) return ORDER_YEAR[names.length] || ORDER_YEAR_MANY;
+    // 연도 계열(2023년 · 2023)도 일반 막대와 같은 순서 (v1.1)
     if (bars === 2) return ORDER_BINARY;
     return ORDER_DEFAULT;
   };
@@ -312,8 +311,21 @@
       extra,
     );
   const rawText = (p) => (p.data && typeof p.data === "object" && p.data.raw ? p.data.raw : null);
-  /* 꺾은선 값 레이블 상자 : 선 · 점과 겹쳐도 읽히도록 그래프 바탕색 면 + 얇은 테두리 */
-  const labelBox = (ctx, borderColor) => ({ backgroundColor: ctx.colors.surface, borderColor: borderColor || ctx.colors.border, borderWidth: 1, borderRadius: 4, padding: [3, 6] });
+  /* 꺾은선 값 레이블 상자 (v1.1 line-data-label-style) : 라이트 흰색 60% · 다크 검정 5% 면,
+     테두리는 글자와 같은 색 40% · 0.8px, 여백 상하 3px · 좌우 2px, 모서리 2px. 글자 · 선 전체가 아니라 면과 테두리의 알파만 조절 */
+  const withAlpha = (color, a) => {
+    const hex = /^#([0-9a-f]{6})$/i.exec(String(color).trim());
+    if (hex) return `rgba(${hex[1].match(/../g).map((h) => parseInt(h, 16)).join(",")},${a})`;
+    const rgb = /^rgba?\(([^)]+)\)$/i.exec(String(color).trim());
+    if (rgb) return `rgba(${rgb[1].split(",").slice(0, 3).map((v) => v.trim()).join(",")},${a})`;
+    return color;
+  };
+  const lineLabel = (ctx, color) => {
+    const text = ctx.dark ? ctx.colors.text : color || ctx.colors.text;
+    return { color: text, backgroundColor: ctx.dark ? "rgba(0,0,0,0.05)" : "rgba(255,255,255,0.6)", borderColor: withAlpha(text, 0.4), borderWidth: 0.8, borderRadius: 2, padding: [3, 2] };
+  };
+  /* 꺾은선 색 세트 : 다크는 꺾은선 계열 순서대로 01부터 (k = 그래프 안 꺾은선 순번) */
+  const lineSet = (ctx, k, lightIndex) => ctx.sets[ctx.dark ? ORDER_LINE_DARK[k % ORDER_LINE_DARK.length] : lightIndex];
   /* 툴팁 : 견본(패턴·선 모양) + 계열 이름 + 값 */
   const tooltipFormatter = (ctx, markers) => (params) => {
     const arr = Array.isArray(params) ? params : [params];
@@ -341,8 +353,10 @@
 
   /* 막대 계열 (세로·가로) */
   const barSeries = (ctx, s, i, horizontal, stack) => {
-    const set = ctx.sets[ctx.order[i % ctx.order.length]];
-    const pattern = ctx.patterns ? decal(set) : null;
+    // 막대 계열이 1개이면 06 기본 파랑 · 무패턴 (v1.1 : 범례를 숨겨도 실제 계열 수 기준)
+    const single = ctx.model.series.length === 1;
+    const set = ctx.sets[single ? SINGLE_BAR : ctx.order[i % ctx.order.length]];
+    const pattern = ctx.patterns && !single ? decal(set) : null;
     const item = { color: set.bg, decal: pattern, borderRadius: 0 };
     const one = {
       name: s.name,
@@ -351,6 +365,7 @@
       emphasis: { itemStyle: { borderColor: FOCUS_LINE, borderWidth: 2 } },
       data: s.data.map((v, k) => ({ value: v, raw: s.texts ? s.texts[k] : "", itemStyle: Object.assign({}, item) })),
       _set: set,
+      _plain: single, // 단일 막대 : 범례 · 툴팁 견본도 무패턴
     };
     if (stack) {
       /* 누적 막대 라벨 : 3% 미만 숨김, 그 이상은 조각 안쪽 (패턴 위에서는 바탕색 상자) */
@@ -363,7 +378,7 @@
           position: "inside",
           color: set.text,
           backgroundColor: pattern ? set.bg : "transparent",
-          borderRadius: 4,
+          borderRadius: 5,
           padding: pattern ? [3, 6] : 0,
           fontWeight: "bold",
           fontSize: fs(ctx, 13),
@@ -387,7 +402,7 @@
   const markersOf = (ctx, series) =>
     series.map((s) => {
       if (s.type === "line") return { html: swatchImg(lineSwatch(s.lineStyle.color, s._lineStyle || LINE_STYLES[0], 30, 16), 30, 16), unit: s._unit };
-      return { html: swatchImg(barSwatch(s._set, ctx.patterns, 30, 16), 30, 16), unit: s._unit };
+      return { html: swatchImg(barSwatch(s._set, ctx.patterns && !s._plain, 30, 16), 30, 16), unit: s._unit };
     });
 
   const BUILD = {
@@ -447,7 +462,7 @@
     /* 다중 꺾은선 (①) */
     line(ctx) {
       const { model } = ctx;
-      ctx.order = ctx.order || (ctx.config.palette || ORDER_DEFAULT);
+      ctx.order = ctx.order || (ctx.config.palette || ORDER_LINE_LIGHT);
       /* 값 레이블 자리 : 항목(가로축 한 칸)마다 보이는 계열을 값 순서로 세워 위쪽 절반은 점 위, 아래쪽 절반은 점 아래에 둠
          (선이 두 개면 큰 값은 위 · 작은 값은 아래). 그래도 서로 겹치는 레이블은 겹치지 않을 때까지 세로로 밀어내고 점과 지시선으로 이음
          밀려난 레이블이 점을 덮게 되면 점의 대각선 옆으로 뺌
@@ -536,7 +551,7 @@
         });
       });
       const series = model.series.map((s, i) => {
-        const set = ctx.sets[ctx.order[i % ctx.order.length]];
+        const set = lineSet(ctx, i, ctx.order[i % ctx.order.length]);
         const style = ctx.patterns ? LINE_STYLES[i % LINE_STYLES.length] : LINE_STYLES[0];
         return {
           name: s.name,
@@ -549,7 +564,7 @@
           itemStyle: { color: set.bg },
           lineStyle: { color: set.bg, width: 2.5, type: style.type },
           emphasis: { scale: 1.38, lineStyle: { width: 3 } },
-          label: Object.assign({ show: ctx.labels, position: "top", distance: dist, fontSize: size, color: ctx.colors.text, formatter: barLabelFormatter(ctx) }, labelBox(ctx, set.bg)),
+          label: Object.assign({ show: ctx.labels, position: "top", distance: dist, fontSize: size, formatter: barLabelFormatter(ctx) }, lineLabel(ctx, ctx.colors.text)),
           labelLayout: (p) => ({ dx: aside[i][p.dataIndex] || 0, dy: shift[i][p.dataIndex] || 0 }),
           labelLine: { show: true, lineStyle: { color: set.bg, width: 1 } },
           _lineStyle: style,
@@ -577,8 +592,8 @@
       const gMin = Math.min(0, Math.floor(Math.min(...valid, 0) / 3) * 3);
       const gMax = Math.max(3, Math.ceil((Math.max(...valid, 0) * 1.8) / 3) * 3);
       const unit = ctx.unit || "명";
-      const barSet = ctx.sets[5];
-      const lineSet = ctx.sets[8];
+      const barSet = ctx.sets[SINGLE_BAR]; // 막대 계열 1개 : 06 무패턴 (v1.1)
+      const growthSet = lineSet(ctx, 0, 8);
       const lineStyle = ctx.patterns ? LINE_STYLES[1] : LINE_STYLES[0];
       const barName = `${s.name} (${unit})`;
       const lineName = "전년 대비 증가율(%)";
@@ -590,11 +605,12 @@
       const bar = {
         name: barName,
         type: "bar",
-        itemStyle: { color: barSet.bg, decal: ctx.patterns ? decal(barSet) : null, borderRadius: 0 },
+        itemStyle: { color: barSet.bg, decal: null, borderRadius: 0 },
         emphasis: { itemStyle: { borderColor: FOCUS_LINE, borderWidth: 2 } },
         label: { position: "top" },
         data: labelled(s.data, ctx.colors.text, (p) => fmtNumber(p.value)),
         _set: barSet,
+        _plain: true,
         _unit: unit,
       };
       const line = {
@@ -604,12 +620,12 @@
         connectNulls: false,
         symbol: lineStyle.symbol === "circle" ? "circle" : "rect",
         symbolSize: 8,
-        itemStyle: { color: lineSet.bg },
-        lineStyle: { color: lineSet.bg, width: 3, type: lineStyle.type },
+        itemStyle: { color: growthSet.bg },
+        lineStyle: { color: growthSet.bg, width: 3, type: lineStyle.type },
         emphasis: { scale: 1.38, lineStyle: { width: 3.5 } },
         z: 10,
         label: { position: "top", distance: 8 },
-        data: labelled(growth, lineSet.bg, (p) => `${(+p.value).toFixed(1)}%`, Object.assign(labelBox(ctx, lineSet.bg), { padding: [3, 4] })), // 파란 막대 위에서도 읽히게 상자 (옆 해의 막대 값과 닿지 않게 좁은 여백)
+        data: labelled(growth, ctx.dark ? ctx.colors.text : growthSet.bg, (p) => `${(+p.value).toFixed(1)}%`, lineLabel(ctx, growthSet.bg)), // 파란 막대 위에서도 읽히게 상자 (v1.1 꺾은선 레이블)
         _lineStyle: { type: lineStyle.type, symbol: lineStyle.symbol === "circle" ? "circle" : "rect" },
         _unit: "%",
       };
@@ -704,7 +720,7 @@
     /* 스몰 멀티플 패널 하나 (⑧ 배치별·급별·장애유형별, sm-trend-v63 panelOption) */
     panel(ctx, s) {
       const { model } = ctx;
-      const set = ctx.sets[5];
+      const set = lineSet(ctx, 0, 5);
       const li = s.data.reduce((a, v, i) => (v != null ? i : a), -1);
       const n = model.categories.length;
       const o = baseOption(ctx);
@@ -733,7 +749,7 @@
           itemStyle: { color: set.bg },
           lineStyle: { color: set.bg, width: 2.5 },
           emphasis: { scale: 1.38, lineStyle: { width: 3 } },
-          data: s.data.map((v, i) => (v == null ? v : { value: v, label: Object.assign({ show: ctx.labels && i === li, position: "top", distance: 8, fontWeight: 700, color: ctx.colors.strong, fontSize: fs(ctx, 13), formatter: (p) => fmtNumber(p.value) }, labelBox(ctx), { borderWidth: 0 }) })), // 패널 값 상자는 테두리 없이 면만
+          data: s.data.map((v, i) => (v == null ? v : { value: v, label: Object.assign({ show: ctx.labels && i === li, position: "top", distance: 8, fontWeight: 700, fontSize: fs(ctx, 13), formatter: (p) => fmtNumber(p.value) }, lineLabel(ctx, ctx.colors.strong)) })), // v1.1 꺾은선 레이블 상자
         },
       ];
       return o;
@@ -1105,7 +1121,7 @@
         if (s.type === "line") {
           img.src = lineSwatch(s.lineStyle.color, s._lineStyle || LINE_STYLES[0]);
           img.classList.add("line");
-        } else img.src = barSwatch(s._set, ctx.patterns);
+        } else img.src = barSwatch(s._set, ctx.patterns && !s._plain);
         const label = document.createElement("span");
         label.textContent = name;
         const state = document.createElement("span");

@@ -1,10 +1,11 @@
 <!-- ext: 신규 컴포넌트 (KRDS 없음) / 그래프 : 통계표 값을 ECharts 그래프로 보여주는 영역 (범례 · 키보드 탐색 · 확대 · 다운로드 · 인쇄) -->
 <!--
-  기준 : nise2026/nise_graph_13types_v1.0.html (그래프 13종 검토본 v63) 의 색·패턴 세트, 꺾은선 모양, 글자 크기, HTML 범례, 키보드 탐색, 내보내기 규칙
+  기준 : nise2026/nise_graph_13types_v1.1.html (그래프 13종 v1.1) 의 색·패턴 세트, 꺾은선 모양 · 레이블, 글자 크기, HTML 범례, 키보드 탐색, 내보내기 규칙
+         v1.0 과의 차이 : nise2026/nise_graph_v1.0_v1.1_comparison.md, 반영 내용 : docs/maintenance.md [그래프 색 · 패턴 기준]
          상자 · 범례 배치는 Figma (컨텐츠 > 시계열시각화-view · 핵심데이터시각화-view · s02데이터분석_교차분석_view · 특수교육현황-*)
   - 불러오기 (페이지 [07] 스크립트, krds-base.js 다음)
       <script src="../../../js/common/lib/echarts.min.js"></script>  : ECharts 5.5.0 (13types 파일에 내장된 빌드를 그대로 분리)
-      <script src="../../../js/common/cm-chart.js"></script>         : 그래프 모듈 (CmChart)
+      <script src="../../../js/common/cm-chart.js?v=날짜"></script>   : 그래프 모듈 (CmChart). 스크립트를 고치면 ?v= 날짜를 바꿈
   - 스타일 : css/common/krds-custom.css [그래프]
   - 확대 모달 : tmpl/kr/modal.html #modal_chart_zoom (KRDS 모달, 글자 크기 5단계)
 
@@ -23,7 +24,8 @@
     data-chart-unit      % · 명 · 개 (값 라벨 · 툴팁 · 축)
     data-chart-tools     그래프 도구를 담은 영역 선택자 (아래 도구 속성을 이 안에서 찾음, 그래프 여러 개가 함께 쓸 수 있음)
     data-chart-source    출처 문구 선택자 (내려받은 그림 · CSV 아래에 들어감)
-    data-chart-palette   색·패턴 세트 순서 직접 지정 (예 "1,3,4,6"). 없으면 13types 규칙 : 일반 5→7→6…, 막대 2개 5·7, 연도 계열 연함→진함
+    data-chart-palette   색·패턴 세트 순서 직접 지정 (0부터 센 번호, 예 "1,3,4,6" = 02·04·05·07). 없으면 v1.1 규칙 :
+                         일반 · 연도 계열 06→08→05→09→04→10→03→01→07→02, 막대 2개 06·08, 막대 계열 1개는 지정과 관계없이 06 무패턴
     data-chart-height    그래프 높이 (기본 40rem)
     data-chart-growth-skip  combo 에서 전년 대비 증가율을 그리지 않을 연도 (예 "2008,2009,2010"). 산식이 달라 비교할 수 없는 해
     data-chart-series    row | col : 표에서 계열을 읽는 방향을 바꿀 때
@@ -41,7 +43,7 @@
     - 키보드 : 그래프 안 role="grid" 대리 칸 (Tab 한 번 정지) ←→ 값 · ↑↓ 계열 · Enter/Space 값 확인 · Esc 닫기, aria-keyshortcuts, 값은 aria-live 로 읽음
     - 범례 : button[aria-pressed] 로 계열 표시/숨김, 숨긴 항목이 있으면 '전체 보기'
     - 색에 무관한 인식 : 막대는 패턴(decal), 꺾은선은 선 모양 + 점 모양
-    - 화면 표시 모드(고대비 · 시스템 다크)를 바꾸면 다크 팔레트로 다시 그림
+    - 화면 표시 모드(고대비 · 시스템 다크)를 바꾸면 다시 그림. 막대 색 · 패턴은 라이트와 같고, 꺾은선만 01부터 · 레이블 상자는 다크용
 -->
 
 <!-- 예 : 통계표를 읽는 세로 막대 + 종류 전환 · 토글 · 확대 · 다운로드 · 인쇄 -->

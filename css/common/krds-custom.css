@@ -3737,7 +3737,7 @@ p {
 }
 
 /* [그래프] 신규 컴포넌트 (KRDS 없음) : html/common/code/ext_chart.html, 스크립트 js/common/cm-chart.js
-   - 그래프 안쪽(색·패턴·글자·축)은 nise2026/nise_graph_13types_v1.0.html(검토본 v63) 기준, 범례·상자 배치는 Figma 기준
+   - 그래프 안쪽(색·패턴·글자·축)은 nise2026/nise_graph_13types_v1.1.html 기준, 범례·상자 배치는 Figma 기준
    - 범례 : 버튼(aria-pressed). 켜진 항목은 Figma 범례(연한 Primary 바탕·Primary 테두리), 숨긴 항목은 회색 + 취소선 */
 .cm-chart {
   display: flex;
