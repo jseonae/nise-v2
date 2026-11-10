@@ -7,7 +7,7 @@
 ## 메뉴 규칙과 노출 상태
 
 - 메뉴 데이터는 `js/kr/include.js`의 `MENU`에서 관리합니다.
-- 1Depth는 통계정보·데이터분석·알림마당이며, 현재 데이터분석은 `hidden: true`입니다.
+- 1Depth는 통계정보·데이터분석·알림마당이며, 모두 보입니다. 1Depth를 숨기려면 `js/kr/include.js` MENU에 `hidden: true`를 넣고 `tmpl/kr/header.html`의 헤더 버튼을 주석 처리합니다.
 - 헤더의 1Depth 링크는 해당 그룹의 첫 화면으로 이동합니다. GNB에는 현재 그룹의 2Depth 메뉴를 표시합니다.
 - 모바일 전체메뉴와 전체메뉴 팝업은 숨김 설정을 제외한 그룹으로 구성합니다.
 - 목록·상세 화면은 `이름_list.html`·`이름_view.html`로 짝을 이룹니다.
@@ -32,7 +32,7 @@
 | 알림마당 | 홍보영상 | `html/kr/board/promo_video.html` | s03알림마당_홍보영상 view |
 | 통합검색 | 검색 결과·결과 없음 | `html/kr/search/search_result.html`, `html/kr/search/search_result_none.html` | 기존 문서에 프레임명 없음 |
 
-메인과 통합검색은 일반 2Depth 메뉴에 속하지 않는 화면입니다. 교차분석 두 파일은 직접 접근할 수 있지만 데이터분석 메뉴는 숨김 상태입니다. 시연·미연동 기능은 [개발·유지보수](maintenance.md)의 운영 연동 항목에서 확인합니다.
+메인과 통합검색은 일반 2Depth 메뉴에 속하지 않는 화면입니다. 데이터분석 메뉴는 2026-11-10에 숨김을 해제했습니다(2026-10-21부터 숨김). 시연·미연동 기능은 [개발·유지보수](maintenance.md)의 운영 연동 항목에서 확인합니다.
 
 ## 공통 템플릿
 

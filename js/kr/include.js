@@ -20,8 +20,8 @@
       ],
     },
     {
-      // hidden : 메뉴(모바일 전체메뉴 · 전체메뉴 팝업)에서 숨김. 기획팀 해제 요청 전까지 데이터분석 숨김
-      name: "데이터분석", dir: "analysis", hidden: true,
+      // hidden: true 를 넣으면 메뉴(모바일 전체메뉴 · 전체메뉴 팝업)에서 숨김. 헤더 버튼(tmpl/kr/header.html)도 함께 주석 처리
+      name: "데이터분석", dir: "analysis",
       items: [
         { name: "교차분석", file: "cross_analysis", desc: "특수교육 실태조사 원자료로 문항 응답을 응답자 특성별로 교차분석할 수 있습니다. 가중치를 적용한 그래프와 통계표를 제공합니다." },
       ],
